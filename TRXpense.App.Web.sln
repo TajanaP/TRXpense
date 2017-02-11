@@ -5,6 +5,10 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TRXpense.App.Web", "TRXpense.App.Web\TRXpense.App.Web.csproj", "{BE7957EC-4BB3-476D-9EA7-4ED1844DDAD0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TRXpense.Bll.Model", "TRXpense.Bll.Model\TRXpense.Bll.Model.csproj", "{EC743308-1B11-4152-A154-1D07FA3523D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TRXpense.Dal", "TRXpense.Dal\TRXpense.Dal.csproj", "{CF69E562-79A7-4C8E-BB2F-E4A9C5FF549C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{BE7957EC-4BB3-476D-9EA7-4ED1844DDAD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE7957EC-4BB3-476D-9EA7-4ED1844DDAD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE7957EC-4BB3-476D-9EA7-4ED1844DDAD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC743308-1B11-4152-A154-1D07FA3523D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC743308-1B11-4152-A154-1D07FA3523D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC743308-1B11-4152-A154-1D07FA3523D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC743308-1B11-4152-A154-1D07FA3523D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF69E562-79A7-4C8E-BB2F-E4A9C5FF549C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF69E562-79A7-4C8E-BB2F-E4A9C5FF549C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF69E562-79A7-4C8E-BB2F-E4A9C5FF549C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF69E562-79A7-4C8E-BB2F-E4A9C5FF549C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

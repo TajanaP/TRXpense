@@ -246,6 +246,16 @@
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TRXpense.Bll.Model\TRXpense.Bll.Model.csproj">
+      <Project>{EC743308-1B11-4152-A154-1D07FA3523D9}</Project>
+      <Name>TRXpense.Bll.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TRXpense.Dal\TRXpense.Dal.csproj">
+      <Project>{CF69E562-79A7-4C8E-BB2F-E4A9C5FF549C}</Project>
+      <Name>TRXpense.Dal</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
