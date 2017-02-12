@@ -6,7 +6,7 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using TRXpense.App.Web.Models;
+using TRXpense.App.Web.ViewModels;
 
 namespace TRXpense.App.Web.Controllers
 {

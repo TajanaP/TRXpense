@@ -58,7 +58,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database\ApplicationDbContext.cs" />
+    <Compile Include="Migrations\201702111845101_Initial.cs" />
+    <Compile Include="Migrations\201702111845101_Initial.Designer.cs">
+      <DependentUpon>201702111845101_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702120936572_AdditionalPropertiesForRegistration.cs" />
+    <Compile Include="Migrations\201702120936572_AdditionalPropertiesForRegistration.Designer.cs">
+      <DependentUpon>201702120936572_AdditionalPropertiesForRegistration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\User\ApplicationUserRepository.cs" />
+    <Compile Include="Repositories\User\IApplicationUserRepository.cs" />
     <Compile Include="Repositories\Base\BaseRepository.cs" />
     <Compile Include="Repositories\Base\IBaseRepository.cs" />
   </ItemGroup>
@@ -72,6 +83,15 @@
       <Name>TRXpense.Bll.Model</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201702111845101_Initial.resx">
+      <DependentUpon>201702111845101_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702120936572_AdditionalPropertiesForRegistration.resx">
+      <DependentUpon>201702120936572_AdditionalPropertiesForRegistration.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

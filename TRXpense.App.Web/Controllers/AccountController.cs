@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using TRXpense.App.Web.Models;
+using TRXpense.App.Web.ViewModels;
 using TRXpense.Bll.Model;
 
 namespace TRXpense.App.Web.Controllers
@@ -132,7 +132,7 @@ namespace TRXpense.App.Web.Controllers
             }
         }
 
-        //
+        // loading the registration form
         // GET: /Account/Register
         [AllowAnonymous]
         public ActionResult Register()
@@ -149,10 +149,17 @@ namespace TRXpense.App.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    UserName = model.Email,
+                    Email = model.Email
+                };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    // line for automatic LogIn
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771

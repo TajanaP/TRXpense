@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace TRXpense.App.Web.Models
+namespace TRXpense.App.Web.ViewModels
 {
     public class ExternalLoginConfirmationViewModel
     {
@@ -64,6 +64,16 @@ namespace TRXpense.App.Web.Models
 
     public class RegisterViewModel
     {
+        [Required]
+        [StringLength(200)]
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; }
+
+        [Required]
+        [StringLength(200)]
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; }
+
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
