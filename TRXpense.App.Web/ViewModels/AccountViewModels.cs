@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace TRXpense.App.Web.ViewModels
@@ -65,14 +66,30 @@ namespace TRXpense.App.Web.ViewModels
     public class RegisterViewModel
     {
         [Required]
-        [StringLength(200)]
         [Display(Name = "First Name")]
         public string FirstName { get; set; }
 
         [Required]
-        [StringLength(200)]
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
+
+        [Required]
+        [Display(Name = "Role")]
+        public string UserRole { get; set; }
+
+        [Required]
+        [Display(Name = "Date Of Birth")]
+        public DateTime DateOfBirth { get; set; }
+
+        [Required]
+        public string OIB { get; set; }
+
+        [Required]
+        [Display(Name = "Cost Center")]
+        public string CostCenter { get; set; }
+
+        [Required]
+        public string Position { get; set; }
 
         [Required]
         [EmailAddress]

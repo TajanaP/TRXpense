@@ -30,6 +30,30 @@
         </div>
     </div>
     <div class="form-group">
+        @Html.LabelFor(m => m.DateOfBirth, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.DateOfBirth, "{0:dd.MM.yyyy.}", new { @class = "form-control", placeholder = "dd.MM.yyyy." })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.OIB, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.OIB, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.CostCenter, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.CostCenter, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Position, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.Position, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
         @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
             @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
@@ -39,6 +63,13 @@
         @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
             @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        @*@Html.DropDownList("Roles", ViewBag.Roles as SelectList, "-- Select Role --")*@  @*another way of displaying dropdown*@
+        @Html.LabelFor(m => m.UserRole, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.DropDownList("UserRole", (IEnumerable<SelectListItem>)ViewBag.Roles, "-- Select Role --", new { @class = "form-control" })
         </div>
     </div>
     <div class="form-group">

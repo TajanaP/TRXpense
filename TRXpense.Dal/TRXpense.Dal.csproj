@@ -66,6 +66,10 @@
     <Compile Include="Migrations\201702120936572_AdditionalPropertiesForRegistration.Designer.cs">
       <DependentUpon>201702120936572_AdditionalPropertiesForRegistration.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201702122001536_MorePropertiesForRegistration.cs" />
+    <Compile Include="Migrations\201702122001536_MorePropertiesForRegistration.Designer.cs">
+      <DependentUpon>201702122001536_MorePropertiesForRegistration.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\User\ApplicationUserRepository.cs" />
@@ -89,6 +93,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201702120936572_AdditionalPropertiesForRegistration.resx">
       <DependentUpon>201702120936572_AdditionalPropertiesForRegistration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702122001536_MorePropertiesForRegistration.resx">
+      <DependentUpon>201702122001536_MorePropertiesForRegistration.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

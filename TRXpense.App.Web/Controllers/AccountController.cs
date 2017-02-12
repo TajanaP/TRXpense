@@ -20,13 +20,13 @@ namespace TRXpense.App.Web.Controllers
 
         public AccountController()
         {
+            _context = new ApplicationDbContext();
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
-            _context = new ApplicationDbContext();
         }
 
         public ApplicationSignInManager SignInManager
@@ -139,6 +139,13 @@ namespace TRXpense.App.Web.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
+            //ViewBag.Roles = new SelectList(_context.Roles, "Name", "Name"); // another way of filling dropdown
+            ViewBag.Roles = _context.Roles.
+                OrderBy(r => r.Name).
+                ToList().
+                Select(rr =>
+                    new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
+
             return View();
         }
 
@@ -156,11 +163,18 @@ namespace TRXpense.App.Web.Controllers
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     UserName = model.Email,
-                    Email = model.Email
+                    Email = model.Email,
+                    UserRole = model.UserRole,
+                    DateOfBirth = model.DateOfBirth,
+                    OIB = model.OIB,
+                    CostCenter = model.CostCenter,
+                    Position = model.Position
                 };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    UserManager.AddToRole(user.Id, model.UserRole);
+
                     // line for automatic LogIn
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
