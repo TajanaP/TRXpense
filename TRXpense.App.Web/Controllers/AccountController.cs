@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using TRXpense.App.Web.ViewModels;
 using TRXpense.Bll.Model;
+using TRXpense.Dal.Database;
 
 namespace TRXpense.App.Web.Controllers
 {
@@ -15,6 +16,7 @@ namespace TRXpense.App.Web.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private readonly ApplicationDbContext _context;
 
         public AccountController()
         {
@@ -24,6 +26,7 @@ namespace TRXpense.App.Web.Controllers
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            _context = new ApplicationDbContext();
         }
 
         public ApplicationSignInManager SignInManager
@@ -132,7 +135,6 @@ namespace TRXpense.App.Web.Controllers
             }
         }
 
-        // loading the registration form
         // GET: /Account/Register
         [AllowAnonymous]
         public ActionResult Register()
