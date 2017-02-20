@@ -71,12 +71,12 @@ namespace TRXpense.Dal.Repositories.Base
             _dbContext.Set<TEntity>().RemoveRange(entities);
         }
 
-        public void ExecuteUpdates()
+        public void Save()
         {
             _dbContext.SaveChanges();
         }
 
-        public async Task ExecuteUpdatesAsync()
+        public async Task SaveAsync()
         {
             await _dbContext.SaveChangesAsync();
         }

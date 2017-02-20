@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using TRXpense.Bll.Model;
 
 namespace TRXpense.App.Web.ViewModels
 {
@@ -87,6 +88,12 @@ namespace TRXpense.App.Web.ViewModels
         [Required]
         [Display(Name = "Cost Center")]
         public string CostCenter { get; set; }
+
+        public ApplicationUser ApplicationUser { get; set; }
+
+        public IEnumerable<CostCenter> CostCenters { get; set; }
+
+        public string CostCenterDescription { get; set; }
 
         [Required]
         public string Position { get; set; }

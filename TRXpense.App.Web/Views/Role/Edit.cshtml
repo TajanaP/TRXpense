@@ -7,19 +7,18 @@
 
 <h2>Edit Role</h2>
 
-@Html.ActionLink("List Roles", "Index") | @Html.ActionLink("Manage User Role", "ManageUserRoles")
+@Html.ActionLink("List Roles", "Index")
 <hr />
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true)
-    @Html.HiddenFor(model => model.Id)
-    <div>
-        Role name
+    @Html.HiddenFor(m => m.Id)
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Name)
+        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
     </div>
-    <p>
-        @Html.TextBoxFor(model => model.Name)
-    </p>
-    <input type="submit" value="Save" />
+    <input type="submit" class="btn btn-primary" value="Save" />
 }
 

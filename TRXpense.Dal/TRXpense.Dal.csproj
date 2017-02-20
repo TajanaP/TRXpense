@@ -70,8 +70,18 @@
     <Compile Include="Migrations\201702122001536_MorePropertiesForRegistration.Designer.cs">
       <DependentUpon>201702122001536_MorePropertiesForRegistration.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201702151956178_AddedCostCenterClass.cs" />
+    <Compile Include="Migrations\201702151956178_AddedCostCenterClass.Designer.cs">
+      <DependentUpon>201702151956178_AddedCostCenterClass.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702192027054_AddedCostCenterDescription.cs" />
+    <Compile Include="Migrations\201702192027054_AddedCostCenterDescription.Designer.cs">
+      <DependentUpon>201702192027054_AddedCostCenterDescription.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\CostCenter\CostCenterRepository.cs" />
+    <Compile Include="Repositories\CostCenter\ICostCenterRepository.cs" />
     <Compile Include="Repositories\User\ApplicationUserRepository.cs" />
     <Compile Include="Repositories\User\IApplicationUserRepository.cs" />
     <Compile Include="Repositories\Base\BaseRepository.cs" />
@@ -96,6 +106,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201702122001536_MorePropertiesForRegistration.resx">
       <DependentUpon>201702122001536_MorePropertiesForRegistration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702151956178_AddedCostCenterClass.resx">
+      <DependentUpon>201702151956178_AddedCostCenterClass.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702192027054_AddedCostCenterDescription.resx">
+      <DependentUpon>201702192027054_AddedCostCenterDescription.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

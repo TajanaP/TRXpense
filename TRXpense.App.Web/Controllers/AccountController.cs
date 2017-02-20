@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using TRXpense.App.Web.ViewModels;
 using TRXpense.Bll.Model;
 using TRXpense.Dal.Database;
+using TRXpense.Dal.Repositories;
 
 namespace TRXpense.App.Web.Controllers
 {
@@ -17,10 +18,12 @@ namespace TRXpense.App.Web.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private readonly ApplicationDbContext _context;
+        private readonly ICostCenterRepository _costCenterRepository;
 
         public AccountController()
         {
             _context = new ApplicationDbContext();
+            _costCenterRepository = new CostCenterRepository();
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
@@ -146,7 +149,13 @@ namespace TRXpense.App.Web.Controllers
                 Select(rr =>
                     new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
 
-            return View();
+            var viewModel = new RegisterViewModel
+            {
+                //ApplicationUser = new ApplicationUser(),
+                CostCenters = _costCenterRepository.GetAllFromDatabaseEnumerable().ToList()
+            };
+
+            return View(viewModel);
         }
 
         //

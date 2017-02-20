@@ -1,13 +1,19 @@
-﻿@*@model Microsoft.AspNet.Identity.EntityFramework.IdentityRole*@
+﻿@model Microsoft.AspNet.Identity.EntityFramework.IdentityRole
 
 @{
     ViewBag.Title = "CreateRoleForm";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/Home">Home</a></li>
+    <li class="breadcrumb-item"><a href="/Account/Register">Register</a></li>
+    <li class="breadcrumb-item active">Create Role</li>
+</ol>
+
 <h2>Create Role</h2>
 
-@Html.ActionLink("List Roles", "Index") | @Html.ActionLink("Manage User Role", "ManageUserRoles")
+@Html.ActionLink("List Roles", "Index")
 <hr />
 
 @using (Html.BeginForm())
@@ -15,11 +21,9 @@
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true)
 
-    <div>
-        Role name
+    <div class="form-group">
+        @Html.LabelFor(m => m.Name)
+        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
     </div>
-    <p>
-        @Html.TextBox("RoleName")
-    </p>
-    <input type="submit" value="Save" />
+    <input type="submit" class="btn btn-primary" value="Save" />
 }
