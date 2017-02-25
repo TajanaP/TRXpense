@@ -22,3 +22,22 @@ select,
 textarea {
     max-width: 280px;
 }
+
+/* -------------------------------- 
+
+My code
+
+-------------------------------- */
+
+.introContent {
+    margin-bottom: 500px;
+}
+
+.modal-content {
+    width: 600px !important;
+    margin: 30px auto !important;
+}
+
+body {
+    font-family: "Open Sans" , "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
