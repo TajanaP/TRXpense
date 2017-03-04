@@ -87,13 +87,11 @@ namespace TRXpense.App.Web.ViewModels
 
         [Required]
         [Display(Name = "Cost Center")]
-        public string CostCenter { get; set; }
-
-        public ApplicationUser ApplicationUser { get; set; }
+        public int CostCenter { get; set; }
 
         public IEnumerable<CostCenter> CostCenters { get; set; }
 
-        public string CostCenterDescription { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
 
         [Required]
         public string Position { get; set; }

@@ -62,7 +62,7 @@ namespace TRXpense.App.Web.Controllers
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
-            return View();
+            return PartialView("_Login");
         }
 
         //
@@ -176,7 +176,7 @@ namespace TRXpense.App.Web.Controllers
                     UserRole = model.UserRole,
                     DateOfBirth = model.DateOfBirth,
                     OIB = model.OIB,
-                    CostCenter = model.CostCenter,
+                    CostCenterId = model.CostCenter,
                     Position = model.Position
                 };
                 var result = await UserManager.CreateAsync(user, model.Password);

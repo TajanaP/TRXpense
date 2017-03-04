@@ -6,7 +6,10 @@ namespace TRXpense.Dal.Repositories
 {
     public class ApplicationUserRepository : BaseRepository<ApplicationUser>, IApplicationUserRepository
     {
-        public ApplicationUserRepository(ApplicationDbContext dbContext) : base(dbContext)
+        //public ApplicationUserRepository(ApplicationDbContext dbContext) : base(dbContext)
+        //{
+        //}
+        public ApplicationUserRepository() : base(new ApplicationDbContext())
         {
         }
     }

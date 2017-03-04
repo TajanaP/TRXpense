@@ -27,9 +27,10 @@ namespace TRXpense.Bll.Model
         [StringLength(11)]
         public string OIB { get; set; }
 
-        [Required]
-        [StringLength(8)]
-        public string CostCenter { get; set; }
+        public CostCenter CostCenter { get; set; }
+
+        // foreign key
+        public int CostCenterId { get; set; }
 
         [Required]
         public string Position { get; set; }

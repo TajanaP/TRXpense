@@ -1,35 +1,39 @@
 ﻿using System.Linq;
 using System.Web.Mvc;
-using TRXpense.App.Web.ViewModels;
 using TRXpense.Bll.Model;
-using TRXpense.Dal.Database;
 using TRXpense.Dal.Repositories;
-using System.Data.Entity;
 
 namespace TRXpense.App.Web.Controllers
 {
     public class CostCenterController : Controller
     {
         private readonly ICostCenterRepository _costCenterRepository;
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationUserRepository _applicationUserRepository;
 
         public CostCenterController()
         {
             _costCenterRepository = new CostCenterRepository();
-            _context = new ApplicationDbContext();
+            _applicationUserRepository = new ApplicationUserRepository();
         }
 
         // GET: CostCenter
         public ActionResult Index()
         {
-            //var costCenters = _costCenterRepository.GetAllFromDatabaseEnumerable().ToList();
-            //var costCenters = _context.Users.Select(c => c.CostCenter).ToList();
+            var costCenters = _costCenterRepository.GetAllFromDatabaseEnumerable().ToList();
 
-            return View(/*costCenters*/);
+            return View(costCenters);
+        }
+
+        // GET: CostCenter/Details/Id
+        public ActionResult Details(int id)
+        {
+            var users = _applicationUserRepository.GetAllFromDatabaseEnumerable().Where(u => u.CostCenterId == id).ToList();
+
+            return PartialView("_Details", users);
         }
 
         // GET: /CostCenter/Create
-        public ActionResult CreateCostCenter()
+        public ActionResult Create()
         {
             return PartialView("_CostCenterForm");
         }
@@ -38,42 +42,46 @@ namespace TRXpense.App.Web.Controllers
         [HttpPost]
         public ActionResult Create(CostCenter costCenter)
         {
-            if (!ModelState.IsValid)
-            {
-                var viewModel = new RegisterViewModel
-                {
-                    ApplicationUser = new ApplicationUser(),
-                    CostCenters = _costCenterRepository.GetAllFromDatabaseEnumerable().ToList()
-                };
-
-                return View("Register", viewModel);
-            }
-
             if (costCenter.Id == 0)
-            {
                 _costCenterRepository.AddToDatabase(costCenter);
-                _costCenterRepository.Save();
+            else
+            {
+                var costCenterInDB = _costCenterRepository.FindById(costCenter.Id);
+
+                costCenterInDB.Name = costCenter.Name;
+                costCenterInDB.Description = costCenter.Description;
             }
 
-            //if (customer.Id == 0)
-            //{
-            //    _context.Customers.Add(customer);
-            //}
-            //else
-            //{
-            //    var customerInDb = _context.Customers.Single(c => c.Id == customer.Id);
+            _costCenterRepository.Save();
 
-            //    //TryUpdateModel(customerInDb);
+            return RedirectToAction("Index");
+        }
 
-            //    customerInDb.Name = customer.Name;
-            //    customerInDb.Birthdate = customer.Birthdate;
-            //    customerInDb.MembershipTypeId = customer.MembershipTypeId;
-            //    customerInDb.IsSubscribedToNewsletter = customer.IsSubscribedToNewsletter;
-            //}
+        // GET: CostCenter/Edit
+        public ActionResult Edit(int id)
+        {
+            var costCenter = _costCenterRepository.FindById(id);
 
-            //_context.SaveChanges();
+            if (costCenter == null)
+                return HttpNotFound();
 
-            return RedirectToAction("Register", "Account");
+            return PartialView("_CostCenterForm", costCenter);
+        }
+
+        // CostCenter/Delete/Id
+        public JsonResult Delete(int id)
+        {
+            var costCenterInDB = _costCenterRepository.FindById(id);
+            bool result = false;
+
+            if (costCenterInDB != null)
+            {
+                _costCenterRepository.DeleteFromDatabase(costCenterInDB);
+                _costCenterRepository.Save();
+                result = true;
+            }
+
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
     }
 }

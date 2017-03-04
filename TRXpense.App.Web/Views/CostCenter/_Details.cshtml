@@ -1,0 +1,32 @@
+﻿@model IEnumerable<TRXpense.Bll.Model.ApplicationUser>
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title" id="myModalLabel">Employees in this Cost Center:</h4>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="form-group">
+            <div class="modal-body">
+                <table class="table">
+                    @foreach (var user in Model)
+                    {
+                        <thead>
+                            <tr>
+                                <td>Name</td>
+                                <td>OIB</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>@user.FirstName @user.LastName</td>
+                                <td>@user.OIB</td>
+                            </tr>
+                        </tbody>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

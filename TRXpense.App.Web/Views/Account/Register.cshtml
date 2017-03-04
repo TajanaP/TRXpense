@@ -36,8 +36,8 @@
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.CostCenter)
-        @Html.DropDownListFor(c => c.CostCenter, new SelectList(Model.CostCenters, "Id", "Name"), "Select Cost Center", new { @class = "form-control" })
-        @Html.ActionLink("Create new Cost Center", "CreateCostCenter", "CostCenter", null, new { @class = "modal-link" } )
+        @Html.DropDownListFor(m => m.CostCenter, new SelectList(Model.CostCenters, "Id", "Name"), "Select Cost Center", new { @class = "form-control" })
+        @*@Html.ActionLink("Create new Cost Center", "CreateCostCenter", "CostCenter", null, new { @class = "modal-link" } )*@
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.Position)
@@ -54,78 +54,10 @@
     <div class="form-group">
         @Html.LabelFor(m => m.UserRole)
         @Html.DropDownList("UserRole", (IEnumerable<SelectListItem>)ViewBag.Roles, "-- Select Role --", new { @class = "form-control" })
-        @Html.ActionLink("Create New Role", "Create", "Role")
         @*<input type="button" value="Create" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal"
             onclick="location.href='@Url.Action("Create", "Role")'" />*@
     </div>
     <input type="submit" class="btn btn-primary" value="Register" />
-
-    @*<div class="form-group">
-            @Html.LabelFor(m => m.FirstName, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.LastName, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.DateOfBirth, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.DateOfBirth, "{0:dd.MM.yyyy.}", new { @class = "form-control", placeholder = "dd.MM.yyyy." })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.OIB, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.OIB, new { @class = "form-control" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.CostCenter, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.CostCenter, new { @class = "form-control" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.Position, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.Position, new { @class = "form-control" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
-            </div>
-        </div>
-        <div class="form-group">*@
-    @*@Html.DropDownList("Roles", ViewBag.Roles as SelectList, "-- Select Role --")*@  @*another way of displaying dropdown*@
-    @*@Html.LabelFor(m => m.UserRole, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.DropDownList("UserRole", (IEnumerable<SelectListItem>)ViewBag.Roles, "-- Select Role --", new { @class = "form-control" })
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" class="btn btn-default" value="Register" />
-            </div>
-        </div>*@
 }
 
 @* The normal bootstrap modal with out any content in the modal-content div. Note that the id matches the data_target from the link*@
@@ -153,5 +85,4 @@
             alert("Success!");
         }
     </script>
-
 }

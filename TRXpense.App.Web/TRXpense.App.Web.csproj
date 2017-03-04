@@ -254,6 +254,9 @@
     <Content Include="Views\Role\Create.cshtml" />
     <Content Include="Views\Role\Edit.cshtml" />
     <Content Include="Views\CostCenter\_CostCenterForm.cshtml" />
+    <Content Include="Views\Account\_Login.cshtml" />
+    <Content Include="Views\CostCenter\Index.cshtml" />
+    <Content Include="Views\CostCenter\_Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

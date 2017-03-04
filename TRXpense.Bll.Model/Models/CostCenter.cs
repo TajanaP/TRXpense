@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace TRXpense.Bll.Model
 {
@@ -12,5 +13,7 @@ namespace TRXpense.Bll.Model
 
         [Required]
         public string Description { get; set; }
+
+        public ICollection<ApplicationUser> ApplicationUsers { get; set; }
     }
 }

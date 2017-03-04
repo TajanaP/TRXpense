@@ -1,0 +1,88 @@
+﻿@model IEnumerable<TRXpense.Bll.Model.CostCenter>
+
+@{
+    ViewBag.Title = "Cost Centers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Manage Cost Centers</h2>
+
+<p>
+    @Html.ActionLink("Create Cost Center", "Create", "CostCenter", new { @class = "modal-link btn btn-primary" })
+</p>
+
+<div class="container">
+    <table id="costCenters" class="table table-hover">
+        <thead>
+            <tr>
+                <td><strong>Cost Center</strong></td>
+                <td><strong>Description</strong></td>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var costCenter in Model)
+            {
+                <tr id="row_@costCenter.Id">
+                    <td>@Html.ActionLink(costCenter.Name, "Details", "CostCenter", new { id = costCenter.Id }, new { @class = "modal-link" })</td>
+                    <td>@costCenter.Description</td>
+                    <td>
+                        @Html.ActionLink(" ", "Edit", "CostCenter", new { id = costCenter.Id }, new { @class = "modal-link glyphicon glyphicon-pencil" }) |
+                        <a href="#" onclick="ConfirmDelete(@costCenter.Id)"><i class="glyphicon glyphicon-trash"></i> </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <a href="#" class="close" data-dismiss="modal">&times;</a>
+                    <h4 class="modal-title">Delete Employee</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this Cost Center? </p>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+                    <a href="#" class="btn btn-danger" onclick="DeleteCostCenter()">Confirm</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    @*hidden field for storing current employeeId*@
+    <input type="hidden" id="hiddenId" />
+</div>
+
+@section scripts
+{
+    <script>
+
+        var ConfirmDelete = function (id) {
+
+            $("#hiddenId").val(id);
+            $("#myModal").modal('show');
+        }
+
+        var DeleteCostCenter = function () {
+
+            var ccId = $("#hiddenId").val();
+
+            $.ajax({
+
+                type: "POST",
+                url: '@Url.Action("Delete")' @* ili "/CostCenter/Delete"*@,
+                data: { id: ccId },
+                success: function (result) {
+                    $("#myModal").modal("hide");
+                    $("#row_" + ccId).remove();
+                    //window.location.reload(); -> za refresh cijele stranice
+                }
+            })
+        }
+    </script>
+}
