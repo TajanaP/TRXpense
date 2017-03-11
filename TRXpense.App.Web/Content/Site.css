@@ -1,12 +1,14 @@
 ﻿body {
     padding-top: 50px;
     padding-bottom: 20px;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 /* Set padding to keep content from hitting the edges */
 .body-content {
     padding-left: 15px;
     padding-right: 15px;
+    padding-top: 30px;
 }
 
 /* Override the default bootstrap behavior where horizontal description lists 
@@ -25,19 +27,155 @@ textarea {
 
 /* -------------------------------- 
 
-My code
+    My code
 
 -------------------------------- */
-
-.introContent {
-    margin-bottom: 500px;
-}
 
 .modal-content {
     width: 600px !important;
     margin: 30px auto !important;
 }
 
-body {
-    font-family: "Open Sans" , "Helvetica Neue", Helvetica, Arial, sans-serif;
+.btn {
+    font-size: 15px;
+    font-weight: bold;
+    border: 1px solid;
+    border-radius: 12px;
+    margin-top: 20px;
+    text-transform: none;
+}
+
+.btn-default {
+    color: #fff;
+    background-color: #6c6d68;
+    border-color: #dfd7ca;
+}
+
+label {
+    font-weight: normal;
+}
+
+.form-control {
+    height: 42px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.form-control:focus {
+    border-color: #93c54b;
+}
+
+.text-danger {
+    color: #e20a0a;
+}
+
+.radio input[type="radio"], .radio-inline input[type="radio"], .checkbox input[type="checkbox"], .checkbox-inline input[type="checkbox"] {
+    margin-left: 0px;
+}
+
+.radio label, .checkbox label {
+    padding-left: 30px;
+}
+
+.table {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+a:hover, a:focus {
+    color: #93c54b;
+    text-decoration: none;
+}
+
+a:focus {
+    outline: none;
+    outline-offset: 0px;
+}
+
+.glyphicon-trash {
+    color: #e20a0a;
+}
+
+/* -------------------------------- 
+    Index page
+-------------------------------- */
+
+/*.introContent {
+    margin-bottom: 200px;
+}*/
+
+.indexFooter {
+    position: fixed;
+    bottom: 0;
+}
+
+.introText {
+    padding-bottom: 40px;
+}
+
+.navbar-inverse {
+    background-color: #ffffff;
+    border-color: #e6e6e6;
+}
+
+.navbar {
+    border-width: 0 1px 4px 1px;
+}
+
+.navbar-inverse .navbar-brand {
+    color: #93c54b;
+    padding-right: 30px;
+}
+
+.navbar-inverse .navbar-brand:hover {
+    color: #6b9430;
+}
+
+.navbar-brand {
+    float: left;
+    padding: 20px 15px;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 20px;
+    height: 60px;
+}
+
+.navbar .nav > li > a {
+    font-size: 15px;
+    font-weight: bold;
+    text-transform: none;
+}
+
+.navbar .nav > li > a:hover {
+    color: #93c54b;
+}
+
+.navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus {
+    background-color: #ffffff;
+    color: #93c54b;
+}
+
+.dropdown-menu > li > a {
+    font-size: 15px;
+    line-height: 22px;
+    font-weight: 500;
+    text-transform: none;
+}
+
+#navbarIcon {
+    height: 50px;
+}
+
+.navbarIcon {
+    height: 50px;
+}
+
+/* -------------------------------- 
+    Register page
+-------------------------------- */
+
+.registerForm {
+    margin-left: 100px;
 }

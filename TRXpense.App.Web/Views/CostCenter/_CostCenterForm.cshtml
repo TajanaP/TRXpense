@@ -10,17 +10,19 @@
         <div class="form-group">
             <div class="modal-body">
 
-                @using (Html.BeginForm("Create", "CostCenter", FormMethod.Post))
-            {
+                @using (Html.BeginForm("Save", "CostCenter", FormMethod.Post))
+                {
                     @Html.ValidationSummary(true, "Please fix the following errors.")
 
                     <div class="form-group">
                         @Html.LabelFor(m => m.Name)
                         @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Name)
                     </div>
                         <div class="form-group">
                             @Html.LabelFor(m => m.Description)
                             @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Description)
                         </div>
                         <div>
                             @Html.HiddenFor(m => m.Id)
@@ -40,3 +42,8 @@
         </div>
     </div>
 </div>
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")    
+}

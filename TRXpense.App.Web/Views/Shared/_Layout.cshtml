@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,10 +43,10 @@
     </div>
     <div class="container body-content">
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - TRXpense</p>
-        </footer>
+        @*<hr />
+            <footer>
+                <p>&copy; @DateTime.Now.Year - TRXpense</p>
+            </footer>*@
     </div>
 
     @Scripts.Render("~/bundles/jquery")
@@ -55,9 +56,9 @@
 
     @*-----------------------
 
-        BOOTSTRAP MODAL
+            BOOTSTRAP MODAL
 
-    -----------------------*@
+        -----------------------*@
 
     <div id="modal-container" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-content">

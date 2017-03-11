@@ -40,8 +40,13 @@ namespace TRXpense.App.Web.Controllers
 
         // POST: /CostCenter/Create
         [HttpPost]
-        public ActionResult Create(CostCenter costCenter)
+        public ActionResult Save(CostCenter costCenter)
         {
+            ModelState.Remove("Id");
+
+            if (!ModelState.IsValid)
+                return RedirectToAction("Index");
+
             if (costCenter.Id == 0)
                 _costCenterRepository.AddToDatabase(costCenter);
             else
@@ -72,14 +77,17 @@ namespace TRXpense.App.Web.Controllers
         public JsonResult Delete(int id)
         {
             var costCenterInDB = _costCenterRepository.FindById(id);
+            var users = _applicationUserRepository.GetAllFromDatabaseEnumerable().Where(u => u.CostCenterId == id).ToList();
             bool result = false;
 
-            if (costCenterInDB != null)
+            if (users.Count == 0 && costCenterInDB != null)
             {
                 _costCenterRepository.DeleteFromDatabase(costCenterInDB);
                 _costCenterRepository.Save();
                 result = true;
             }
+            else
+                return Json(new { });
 
             return Json(result, JsonRequestBehavior.AllowGet);
         }
