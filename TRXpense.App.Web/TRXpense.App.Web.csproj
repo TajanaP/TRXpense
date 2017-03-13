@@ -250,12 +250,13 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Role\Index.cshtml" />
-    <Content Include="Views\Role\Create.cshtml" />
-    <Content Include="Views\Role\Edit.cshtml" />
     <Content Include="Views\CostCenter\_CostCenterForm.cshtml" />
     <Content Include="Views\Account\_Login.cshtml" />
     <Content Include="Views\CostCenter\Index.cshtml" />
     <Content Include="Views\CostCenter\_Details.cshtml" />
+    <Content Include="Views\Role\_RoleForm.cshtml" />
+    <Content Include="Views\Role\_Details.cshtml" />
+    <Content Include="Views\Role\_Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

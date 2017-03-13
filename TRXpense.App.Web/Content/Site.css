@@ -36,11 +36,21 @@ textarea {
     margin: 30px auto !important;
 }
 
+.alertMessage {
+    color: white;
+    font-size: 15px;
+    background-color: #d9534f;
+    border: 1px solid #d9534f;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 50px;
+}
+
 .btn {
     font-size: 15px;
     font-weight: bold;
     border: 1px solid;
-    border-radius: 12px;
+    border-radius: 7px;
     margin-top: 20px;
     text-transform: none;
 }
@@ -59,6 +69,7 @@ label {
     height: 42px;
     border-radius: 8px;
     margin-bottom: 12px;
+    padding: 10px 16px;
 }
 
 .form-control:focus {
@@ -95,6 +106,10 @@ a:focus {
 }
 
 .glyphicon-trash {
+    color: #e20a0a;
+}
+
+.glyphicon-trash:hover, .glyphicon-trash:focus, .glyphicon-trash:active {
     color: #e20a0a;
 }
 

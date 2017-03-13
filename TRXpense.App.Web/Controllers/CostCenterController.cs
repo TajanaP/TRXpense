@@ -5,6 +5,7 @@ using TRXpense.Dal.Repositories;
 
 namespace TRXpense.App.Web.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CostCenterController : Controller
     {
         private readonly ICostCenterRepository _costCenterRepository;

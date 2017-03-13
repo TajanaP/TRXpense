@@ -50,12 +50,11 @@
                     <a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
                     <a href="#" class="btn btn-danger" onclick="DeleteCostCenter()">Confirm</a>
                 </div>
-
             </div>
         </div>
     </div>
 
-    @*hidden field for storing current employeeId*@
+    @*hidden field for storing current itemId*@
     <input type="hidden" id="hiddenId" />
 </div>
 
@@ -85,7 +84,8 @@
                             message: "There are employees assigned to this Cost Center!"
                                 + "</br>"
                                 + "You can only delete Cost Centers with no employees.",
-                            title: "Warning " + '<span class="glyphicon glyphicon-warning-sign"></span>',
+                            title: "<span style='color:#e20a0a;'><strong> Warning </strong></span> "
+                                + '<span style="color:#e20a0a;" class="glyphicon glyphicon-warning-sign"></span>',
                             buttons: {
                                 success: {
                                     label: "Close",

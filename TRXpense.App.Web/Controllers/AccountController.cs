@@ -139,7 +139,7 @@ namespace TRXpense.App.Web.Controllers
         }
 
         // GET: /Account/Register
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         public ActionResult Register()
         {
             //ViewBag.Roles = new SelectList(_context.Roles, "Name", "Name"); // another way of filling dropdown
@@ -161,8 +161,8 @@ namespace TRXpense.App.Web.Controllers
         //
         // POST: /Account/Register
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
