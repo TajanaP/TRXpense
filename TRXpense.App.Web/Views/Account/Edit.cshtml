@@ -1,0 +1,104 @@
+﻿@model TRXpense.App.Web.ViewModels.RegisterViewModelEdit
+@*@model TRXpense.Bll.Model.ApplicationUser*@
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item"><a href="/Account">Employees</a></li>
+    <li class="breadcrumb-item active">Edit</li>
+</ol>
+
+<h1>Edit employee data</h1>
+<hr />
+
+@using (Html.BeginForm("Edit", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary("", new { @class = "alert alert-danger" })
+
+    <div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.FirstName, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.LastName, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+            </div>
+        </div>
+        @*<div class="form-group">
+            @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+            </div>
+        </div>*@
+        <div class="form-group">
+            @Html.LabelFor(m => m.DateOfBirth, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.DateOfBirth, "{0:dd.MM.yyyy.}", new { @class = "form-control", placeholder = "dd.MM.yyyy." })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.OIB, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.OIB, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Phone, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Phone, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Position, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Position, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.CostCenterId, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.DropDownList("CostCenterId", (List<SelectListItem>)ViewBag.CostCenters, @*"-- Select Cost Center --",*@ new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.UserRole, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.DropDownList("UserRole", (IEnumerable<SelectListItem>)ViewBag.Roles, "-- Select Role --", new { @class = "form-control" })
+                @*<input type="button" value="Create" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal"
+                    onclick="location.href='@Url.Action("Create", "Role")'" />*@
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.SuperiorId, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.DropDownList("SuperiorId", (List<SelectListItem>)ViewBag.Users, @*"-- Select User --",*@ new { @class = "form-control" })
+            </div>
+        </div>
+        <input type="submit" class="btn btn-primary col-md-offset-4" value="Save" />
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -2,87 +2,102 @@
 
 @{
     ViewBag.Title = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Register New Employee</h1>
+<ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item"><a href="/Account">Employees</a></li>
+    <li class="breadcrumb-item active">Register</li>
+</ol>
+
+<h1>Create New Employee</h1>
 <hr />
 
 @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
     @Html.AntiForgeryToken()
-    @Html.ValidationSummary("", new { @class = "text-danger" })
+    @Html.ValidationSummary("", new { @class = "alert alert-danger" })
 
-    <div class="registerForm">
+    <div>
         <div class="form-group">
-            @Html.LabelFor(m => m.FirstName)
-            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+            @Html.LabelFor(m => m.FirstName, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+            </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(m => m.LastName)
-            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+            @Html.LabelFor(m => m.LastName, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+            </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(m => m.Email)
-            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+            @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+            </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(m => m.DateOfBirth)
-            @Html.TextBoxFor(m => m.DateOfBirth, "{0:dd.MM.yyyy.}", new { @class = "form-control", placeholder = "dd.MM.yyyy." })
+            @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+            </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(m => m.OIB)
-            @Html.TextBoxFor(m => m.OIB, new { @class = "form-control" })
+            @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+            </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(m => m.CostCenter)
-            @Html.DropDownListFor(m => m.CostCenter, new SelectList(Model.CostCenters, "Id", "Name"), "Select Cost Center", new { @class = "form-control" })
-            @*@Html.ActionLink("Create new Cost Center", "CreateCostCenter", "CostCenter", null, new { @class = "modal-link" } )*@
+            @Html.LabelFor(m => m.DateOfBirth, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.DateOfBirth, "{0:dd.MM.yyyy.}", new { @class = "form-control", placeholder = "dd.MM.yyyy." })
+            </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(m => m.Position)
-            @Html.TextBoxFor(m => m.Position, new { @class = "form-control" })
+            @Html.LabelFor(m => m.OIB, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.OIB, new { @class = "form-control" })
+            </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(m => m.Password)
-            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+            @Html.LabelFor(m => m.Phone, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Phone, new { @class = "form-control" })
+            </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(m => m.ConfirmPassword)
-            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+            @Html.LabelFor(m => m.Position, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Position, new { @class = "form-control" })
+            </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(m => m.UserRole)
-            @Html.DropDownList("UserRole", (IEnumerable<SelectListItem>)ViewBag.Roles, "-- Select Role --", new { @class = "form-control" })
-            @*<input type="button" value="Create" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal"
-                onclick="location.href='@Url.Action("Create", "Role")'" />*@
+            @Html.LabelFor(m => m.CostCenterId, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(m => m.CostCenterId, new SelectList(Model.CostCenters, "Id", "Name"), "-- Select Cost Center --", new { @class = "form-control", id = "costCenterDropDown" })
+            </div>
         </div>
-        <input type="submit" class="btn btn-primary" value="Register" />
+        <div class="form-group">
+            @Html.LabelFor(m => m.UserRole, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.DropDownList("UserRole", (IEnumerable<SelectListItem>)ViewBag.Roles, "-- Select Role --", new { @class = "form-control" })
+                @*<input type="button" value="Create" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal"
+                    onclick="location.href='@Url.Action("Create", "Role")'" />*@
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.SuperiorId, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(m => m.SuperiorId, new SelectList(Model.Superiors, "Id", "LastName"), "-- Select Superior --", new { @class = "form-control" })
+            </div>
+        </div>
+        <input type="submit" class="btn btn-primary col-md-offset-4" value="Register" />
     </div>
 }
 
-@* The normal bootstrap modal with out any content in the modal-content div. Note that the id matches the data_target from the link*@
-<div id="modal-container" class="modal fade hidden-print" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        </div>
-    </div>
-</div>
-
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-
-    @* The normal bootstrap behavior is to only grab the content for the modal once, if you need to pull in different partial views then the data on the modal will have to be cleared.*@
-    <script type="text/javascript">
-        $(function () {
-            $('#modal-container').on('hidden.bs.modal', function () {
-                $(this).removeData('bs.modal');
-                $('#modal-container .modal-content').empty();
-            });
-        });
-
-        @* callback from form modal*@
-        function success() {
-            alert("Success!");
-        }
-    </script>
 }

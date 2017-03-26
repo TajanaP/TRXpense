@@ -11,12 +11,14 @@ namespace TRXpense.Dal.Repositories.Base
         IQueryable<TEntity> GetAllFromDatabaseQueryable();
         IEnumerable<TEntity> GetAllFromDatabaseEnumerable();
         TEntity FindById(int id);
+        TEntity FindById(string id);
         IEnumerable<TEntity> FindByExpressionInDatabase(Expression<Func<TEntity, bool>> predicate);
         void AddToDatabase(TEntity entity);
         void AddOrUpdateInDatabase(TEntity entity);
         void AddRangeToDatabase(IEnumerable<TEntity> entities);
         void UpdateInDatabase(TEntity entity);
-        void UpdateInDatabase(TEntity entity, Guid id);
+        //void UpdateInDatabase(TEntity entity, Guid id);
+        void UpdateInDatabase(TEntity entity, string id);
         void DeleteFromDatabase(TEntity entity);
         void DeleteRangeFromDatabase(IEnumerable<TEntity> entities);
         void Save();

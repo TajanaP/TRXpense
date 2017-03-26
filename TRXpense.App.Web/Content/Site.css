@@ -80,6 +80,18 @@ label {
     color: #e20a0a;
 }
 
+.input-validation-error {
+    border: 1px solid #e20a0a;
+}
+
+select.input-validation-error {
+    border: 1px solid #e20a0a;
+}
+
+.validation-summary-valid {
+    display:none;
+}
+
 .radio input[type="radio"], .radio-inline input[type="radio"], .checkbox input[type="checkbox"], .checkbox-inline input[type="checkbox"] {
     margin-left: 0px;
 }
@@ -187,10 +199,16 @@ a:focus {
     height: 50px;
 }
 
+.dropdown-menu {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+   
 /* -------------------------------- 
     Register page
 -------------------------------- */
 
-.registerForm {
-    margin-left: 100px;
+.input-group-addon {
+    border-radius: 8px;
+    width: 88px;
 }

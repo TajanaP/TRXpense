@@ -94,6 +94,14 @@
     <Compile Include="Migrations\201703112024089_RemovedUserRoleFK.Designer.cs">
       <DependentUpon>201703112024089_RemovedUserRoleFK.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201703161843371_AddedSuperiorToAppUser.cs" />
+    <Compile Include="Migrations\201703161843371_AddedSuperiorToAppUser.Designer.cs">
+      <DependentUpon>201703161843371_AddedSuperiorToAppUser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703251522548_AddedPhoneToAppUser.cs" />
+    <Compile Include="Migrations\201703251522548_AddedPhoneToAppUser.Designer.cs">
+      <DependentUpon>201703251522548_AddedPhoneToAppUser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\CostCenter\CostCenterRepository.cs" />
@@ -140,6 +148,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201703112024089_RemovedUserRoleFK.resx">
       <DependentUpon>201703112024089_RemovedUserRoleFK.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703161843371_AddedSuperiorToAppUser.resx">
+      <DependentUpon>201703161843371_AddedSuperiorToAppUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703251522548_AddedPhoneToAppUser.resx">
+      <DependentUpon>201703251522548_AddedPhoneToAppUser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

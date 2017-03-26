@@ -2,6 +2,7 @@
 using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -18,22 +19,26 @@ namespace TRXpense.Bll.Model
         public string LastName { get; set; }
 
         [Required]
-        public string UserRole { get; set; }
-
-        [Required]
         public DateTime DateOfBirth { get; set; }
 
         [Required]
         [StringLength(11)]
         public string OIB { get; set; }
 
-        public CostCenter CostCenter { get; set; }
-
-        // foreign key
-        public int CostCenterId { get; set; }
+        [Required]
+        public string Phone { get; set; }
 
         [Required]
         public string Position { get; set; }
+
+        [Required]
+        public string UserRole { get; set; }
+
+        public int CostCenterId { get; set; } // foreign key
+        public CostCenter CostCenter { get; set; }
+
+        public string SuperiorId { get; set; } // foreign key
+        public ApplicationUser Superior { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {

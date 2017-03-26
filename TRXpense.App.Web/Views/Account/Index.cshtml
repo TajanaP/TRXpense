@@ -1,0 +1,119 @@
+﻿@model IEnumerable<TRXpense.App.Web.ViewModels.RegisterViewModel>
+
+@{
+    ViewBag.Title = "Employees";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Employees</h2>
+
+<p>
+    @Html.ActionLink("Create New Employee", "Register", "Account", new { @class = "btn btn-primary" })
+</p>
+
+@if (TempData["message"] != null)
+{
+    <div class="alertMessage">
+        <span class="glyphicon glyphicon-warning-sign"></span>  @ViewBag.Message
+    </div>
+}
+
+<div class="container">
+    <table id="employees" class="table table-hover">
+        <thead>
+            <tr>
+                <td><strong>Employee</strong></td>
+                <td><strong>Position</strong></td>
+                <td><strong>Role</strong></td>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var employee in Model)
+            {
+                <tr id="row_@employee.Id">
+                    <td>
+                        @Html.ActionLink(employee.FirstName + " " + employee.LastName, "Details", "Account",
+                        new { id = employee.Id }, new { @class = "modal-link" })
+                    </td>
+                    <td>@employee.Position</td>
+                    <td>@employee.UserRole</td>
+                    <td>
+                        @Html.ActionLink(" ", "Edit", "Account", new { id = employee.Id }, new { @class = "glyphicon glyphicon-pencil" }) |
+                        <a href="#" onclick="ConfirmDelete('@employee.Id')"><i class="glyphicon glyphicon-trash"></i> </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="modal fade" id="deleteConfirmModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <a href="#" class="close" data-dismiss="modal">&times;</a>
+                    <h4 class="modal-title">Delete</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this Employee? </p>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+                    <a href="#" class="btn btn-danger" onclick="DeleteEmployee()">Confirm</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*hidden field for storing current itemId*@
+    <input type="hidden" id="hiddenId" />
+
+</div>
+
+@section scripts
+{
+    <script>
+
+        var ConfirmDelete = function (id) {
+
+            $("#hiddenId").val(id);
+            $("#deleteConfirmModal").modal('show');
+        }
+
+        var DeleteEmployee = function () {
+
+            var empId = $("#hiddenId").val();
+
+            $.ajax({
+
+                type: "POST",
+                url: '@Url.Action("Delete")', @* or "/Account/Delete"*@
+                data: { id: empId },
+                success: function (result) {
+                    // if this user is superior
+                    if (result != true) {
+                        bootbox.dialog({
+                            message: "This employee is a superior with other employees assigned to him!"
+                                + "</br>"
+                                + "You can only delete superior employees when there are no other employees assigned to them.",
+                            title: "<span style='color:#e20a0a;'><strong> Warning </strong></span> "
+                                + '<span style="color:#e20a0a;" class="glyphicon glyphicon-warning-sign"></span>',
+                            buttons: {
+                                success: {
+                                    label: "Close",
+                                    className: "btn-default",
+                                },
+                            }
+                        });
+                        $("#deleteConfirmModal").modal("hide");
+                    }
+                    // if this user is just an employee
+                    else {
+                        $("#deleteConfirmModal").modal("hide");
+                        $("#row_" + empId).remove();
+                    }
+                }
+            })
+        }
+    </script>
+}

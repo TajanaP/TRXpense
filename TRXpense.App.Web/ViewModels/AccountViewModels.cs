@@ -66,6 +66,8 @@ namespace TRXpense.App.Web.ViewModels
 
     public class RegisterViewModel
     {
+        public string Id { get; set; }
+
         [Required]
         [Display(Name = "First Name")]
         public string FirstName { get; set; }
@@ -75,10 +77,6 @@ namespace TRXpense.App.Web.ViewModels
         public string LastName { get; set; }
 
         [Required]
-        [Display(Name = "Role")]
-        public string UserRole { get; set; }
-
-        [Required]
         [Display(Name = "Date Of Birth")]
         public DateTime DateOfBirth { get; set; }
 
@@ -86,15 +84,26 @@ namespace TRXpense.App.Web.ViewModels
         public string OIB { get; set; }
 
         [Required]
-        [Display(Name = "Cost Center")]
-        public int CostCenter { get; set; }
-
-        public IEnumerable<CostCenter> CostCenters { get; set; }
-
-        public ApplicationUser ApplicationUser { get; set; }
+        public string Phone { get; set; }
 
         [Required]
         public string Position { get; set; }
+
+        [Required]
+        [Display(Name = "Role")]
+        public string UserRole { get; set; }
+
+        [Required]
+        [Display(Name = "Cost Center")]
+        public int CostCenterId { get; set; } // id CC-a prosljeđujem u Register.cshtml kao ID za punjenje dropdowna
+        public IEnumerable<CostCenter> CostCenters { get; set; } // listu CC-a prosljeđujem u Register.html kao VALUE za punjenje dropdowna
+        public CostCenter CostCenter { get; set; } // CC koristim za mapiranje (zbog Details view-a)
+
+        [Required]
+        [Display(Name = "Superior")]
+        public string SuperiorId { get; set; }
+        public IEnumerable<ApplicationUser> Superiors { get; set; }
+        public ApplicationUser Superior { get; set; }
 
         [Required]
         [EmailAddress]
@@ -111,6 +120,53 @@ namespace TRXpense.App.Web.ViewModels
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+    }
+
+    public class RegisterViewModelEdit
+    {
+        public string Id { get; set; }
+
+        [Required]
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; }
+
+        [Required]
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; }
+
+        [Required]
+        [Display(Name = "Date Of Birth")]
+        public DateTime DateOfBirth { get; set; }
+
+        [Required]
+        public string OIB { get; set; }
+
+        [Required]
+        public string Phone { get; set; }
+
+        [Required]
+        public string Position { get; set; }
+
+        [Required]
+        [Display(Name = "Role")]
+        public string UserRole { get; set; }
+
+        [Required]
+        [Display(Name = "Cost Center")]
+        public int CostCenterId { get; set; } // id CC-a prosljeđujem u Register.cshtml kao ID za punjenje dropdowna
+        public IEnumerable<CostCenter> CostCenters { get; set; } // listu CC-a prosljeđujem u Register.html kao VALUE za punjenje dropdowna
+        public CostCenter CostCenter { get; set; } // CC koristim za mapiranje (zbog Details view-a)
+
+        [Required]
+        [Display(Name = "Superior")]
+        public string SuperiorId { get; set; }
+        public IEnumerable<ApplicationUser> Superiors { get; set; }
+        public ApplicationUser Superior { get; set; }
+
+        [Required]
+        [EmailAddress]
+        [Display(Name = "Email")]
+        public string Email { get; set; }
     }
 
     public class ResetPasswordViewModel

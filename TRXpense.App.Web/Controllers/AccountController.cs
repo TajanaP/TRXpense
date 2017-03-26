@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using TRXpense.App.Web.Mappers;
 using TRXpense.App.Web.ViewModels;
 using TRXpense.Bll.Model;
 using TRXpense.Dal.Database;
@@ -19,12 +22,215 @@ namespace TRXpense.App.Web.Controllers
         private ApplicationUserManager _userManager;
         private readonly ApplicationDbContext _context;
         private readonly ICostCenterRepository _costCenterRepository;
+        private readonly IApplicationUserRepository _applicationUserRepository;
 
         public AccountController()
         {
             _context = new ApplicationDbContext();
             _costCenterRepository = new CostCenterRepository();
+            _applicationUserRepository = new ApplicationUserRepository();
         }
+
+        public ActionResult Index()
+        {
+            var model = _applicationUserRepository.GetAllFromDatabaseEnumerable().ToList().MapToViews();
+
+            if (TempData["message"] != null)
+                ViewBag.Message = TempData["message"].ToString();
+
+            return View(model);
+        }
+
+        public ActionResult Details(string id)
+        {
+            var user = _context.Users.Include(c => c.CostCenter).Include(s => s.Superior).SingleOrDefault(u => u.Id == id).MapToView();
+
+            //ovdje ne mogu koristiti INCLUDE:
+            //var user = _applicationUserRepository.GetAllFromDatabaseEnumerable().Where(u => u.Id == id).SingleOrDefault();
+
+            return PartialView("_Details", user);
+        }
+
+        // GET: /Account/Register
+        [Authorize(Roles = "Admin")]
+        public ActionResult Register()
+        {
+            //ViewBag.Roles = new SelectList(_context.Roles, "Name", "Name"); // another way of filling dropdown
+            ViewBag.Roles = _context.Roles.
+                OrderBy(r => r.Name).
+                ToList().
+                Select(rr =>
+                    new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
+
+            // prvi primjer popunjavanja dropdpwn liste (drugi se nalazi u Edit Action-u)
+            var viewModel = new RegisterViewModel
+            {
+                CostCenters = _costCenterRepository.GetAllFromDatabaseEnumerable().ToList(),
+                Superiors = _applicationUserRepository.GetAllFromDatabaseEnumerable().Where(s => s.UserRole == "Manager" || s.UserRole == "Director").ToList()
+            };
+
+            return View(viewModel);
+        }
+
+        //
+        // POST: /Account/Register
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    UserName = model.Email,
+                    Email = model.Email,
+                    DateOfBirth = model.DateOfBirth,
+                    OIB = model.OIB,
+                    Phone = model.Phone,
+                    Position = model.Position,
+                    UserRole = model.UserRole,
+                    CostCenterId = model.CostCenterId,
+                    SuperiorId = model.SuperiorId
+                };
+
+                var existingUser = _applicationUserRepository.GetAllFromDatabaseEnumerable().Where(u => u.UserName == user.UserName).SingleOrDefault();
+
+                if (existingUser == null)
+                {
+                    var result = await UserManager.CreateAsync(user, model.Password);
+                    if (result.Succeeded)
+                    {
+                        UserManager.AddToRole(user.Id, model.UserRole);
+
+                        // line for automatic LogIn
+                        //await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
+                        // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
+                        // Send an email with this link
+                        // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                        // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                        // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+                        return RedirectToAction("Index", "Account");
+                    }
+                    AddErrors(result);
+                }
+                else
+                {
+                    TempData["message"] = "You tried to create user with username (email) that is already taken. Email must be unique for each user!";
+                    return RedirectToAction("Index");
+                }
+            }
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+        public ActionResult Edit(string id)
+        {
+            // drugi primjer popunjavanja dropdpwn liste (prvi se nalazi u Register Action-u)
+            FillDropdownValuesForUsers();
+            FillDropdownValuesForCostCenters();
+
+            ViewBag.Roles = _context.Roles.
+                OrderBy(r => r.Name).
+                ToList().
+                Select(rr =>
+                    new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
+
+            var user = _applicationUserRepository.GetAllFromDatabaseEnumerable().Where(u => u.Id == id).SingleOrDefault().MapToViewEdit();
+
+            return View(user);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(RegisterViewModelEdit view)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = view.MapToModelEdit();
+                ApplicationUser userInDB = UserManager.FindById(user.Id);
+
+                userInDB.Email = user.Email;
+                userInDB.FirstName = user.FirstName;
+                userInDB.LastName = user.LastName;
+                userInDB.UserName = user.Email;
+                userInDB.DateOfBirth = user.DateOfBirth;
+                userInDB.OIB = user.OIB;
+                userInDB.Phone = user.Phone;
+                userInDB.Position = user.Position;
+                userInDB.UserRole = user.UserRole;
+                userInDB.CostCenterId = user.CostCenterId;
+                userInDB.SuperiorId = user.SuperiorId;
+
+                IdentityResult result = UserManager.Update(userInDB);
+
+                if (result.Succeeded)
+                    return RedirectToAction("Index");
+                else
+                    AddErrors(result);
+            }
+            return RedirectToAction("Index");
+        }
+
+        public JsonResult Delete(string id)
+        {
+            var userInDB = _applicationUserRepository.FindById(id);
+            var subordinates = _applicationUserRepository.GetAllFromDatabaseEnumerable().Where(s => s.SuperiorId == id).ToList();
+            bool result = false;
+
+            if (subordinates.Count == 0 && userInDB != null)
+            {
+                _applicationUserRepository.DeleteFromDatabase(userInDB);
+                _applicationUserRepository.Save();
+                result = true;
+            }
+            else
+                return Json(new { });
+
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        private void FillDropdownValuesForUsers()
+        {
+            var selectItems = new List<SelectListItem>();
+
+            var listItem = new SelectListItem();
+            listItem.Text = "-- Select Superior --";
+            listItem.Value = "";
+            selectItems.Add(listItem);
+
+            selectItems.AddRange(_applicationUserRepository
+                .GetAllFromDatabaseEnumerable()
+                .Where(s => s.UserRole == "Manager" || s.UserRole == "Director")
+                .ToList()
+                .MapToListUsers());
+
+            ViewBag.Users = selectItems;
+        }
+
+        private void FillDropdownValuesForCostCenters()
+        {
+            var selectItems = new List<SelectListItem>();
+
+            var listItem = new SelectListItem();
+            listItem.Text = "-- Select Cost Center --";
+            listItem.Value = "";
+            selectItems.Add(listItem);
+
+            selectItems.AddRange(_costCenterRepository.GetAllFromDatabaseEnumerable().ToList().MapToListCostCenters());
+            ViewBag.CostCenters = selectItems;
+        }
+
+
+
+        /* ----------------------
+         
+             CODE BELOW IS ORIGINAL CODE
+             
+           ---------------------- */
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
@@ -136,70 +342,6 @@ namespace TRXpense.App.Web.Controllers
                     ModelState.AddModelError("", "Invalid code.");
                     return View(model);
             }
-        }
-
-        // GET: /Account/Register
-        [Authorize(Roles = "Admin")]
-        public ActionResult Register()
-        {
-            //ViewBag.Roles = new SelectList(_context.Roles, "Name", "Name"); // another way of filling dropdown
-            ViewBag.Roles = _context.Roles.
-                OrderBy(r => r.Name).
-                ToList().
-                Select(rr =>
-                    new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
-
-            var viewModel = new RegisterViewModel
-            {
-                //ApplicationUser = new ApplicationUser(),
-                CostCenters = _costCenterRepository.GetAllFromDatabaseEnumerable().ToList()
-            };
-
-            return View(viewModel);
-        }
-
-        //
-        // POST: /Account/Register
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult> Register(RegisterViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = new ApplicationUser
-                {
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    UserName = model.Email,
-                    Email = model.Email,
-                    UserRole = model.UserRole,
-                    DateOfBirth = model.DateOfBirth,
-                    OIB = model.OIB,
-                    CostCenterId = model.CostCenter,
-                    Position = model.Position
-                };
-                var result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    UserManager.AddToRole(user.Id, model.UserRole);
-
-                    // line for automatic LogIn
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
-                    return RedirectToAction("Index", "Home");
-                }
-                AddErrors(result);
-            }
-
-            // If we got this far, something failed, redisplay form
-            return View(model);
         }
 
         //

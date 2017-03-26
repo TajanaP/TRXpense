@@ -1,0 +1,58 @@
+﻿@model TRXpense.App.Web.ViewModels.RegisterViewModel
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title" id="myModalLabel">Employee Details:</h4>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="modal-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td><strong>Name</strong></td>
+                        <td>@Model.FirstName @Model.LastName</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Email</strong></td>
+                        <td>@Model.Email</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date of Birth</strong></td>
+                        <td>@Model.DateOfBirth.ToShortDateString()</td>
+                    </tr>
+                    <tr>
+                        <td><strong>OIB</strong></td>
+                        <td>@Model.OIB</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Phone</strong></td>
+                        <td>@Model.Phone</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cost Center</strong></td>
+                        <td>@Model.CostCenter.Name</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Position</strong></td>
+                        <td>@Model.Position</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Role</strong></td>
+                        <td>@Model.UserRole</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Superior</strong></td>
+                        <td>@Model.Superior.LastName</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>

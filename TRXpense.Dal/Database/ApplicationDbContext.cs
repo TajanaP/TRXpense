@@ -20,5 +20,15 @@ namespace TRXpense.Dal.Database
         {
             return new ApplicationDbContext();
         }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ApplicationUser>().
+              HasOptional(e => e.Superior).
+              WithMany().
+              HasForeignKey(m => m.SuperiorId);
+        }
     }
 }

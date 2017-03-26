@@ -30,6 +30,11 @@ namespace TRXpense.Dal.Repositories.Base
             return _dbContext.Set<TEntity>().Find(id);
         }
 
+        public TEntity FindById(string id)
+        {
+            return _dbContext.Set<TEntity>().Find(id);
+        }
+
         public void AddToDatabase(TEntity entity)
         {
             _dbContext.Set<TEntity>().Add(entity);
@@ -55,7 +60,13 @@ namespace TRXpense.Dal.Repositories.Base
             _dbContext.Entry(baseEntity).CurrentValues.SetValues(entity);
         }
 
-        public void UpdateInDatabase(TEntity entity, Guid id)
+        //public void UpdateInDatabase(TEntity entity, Guid id)
+        //{
+        //    var baseEntity = _dbContext.Set<TEntity>().Find(id);
+        //    _dbContext.Entry(baseEntity).CurrentValues.SetValues(entity);
+        //}
+
+        public void UpdateInDatabase(TEntity entity, string id)
         {
             var baseEntity = _dbContext.Set<TEntity>().Find(id);
             _dbContext.Entry(baseEntity).CurrentValues.SetValues(entity);
