@@ -73,6 +73,7 @@ namespace TRXpense.App.Web.Mappers
         {
             if (view == null)
                 return null;
+
             return new ApplicationUser()
             {
                 Id = view.Id,

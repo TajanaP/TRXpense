@@ -19,6 +19,7 @@ namespace TRXpense.Dal.Repositories.Base
         void UpdateInDatabase(TEntity entity);
         //void UpdateInDatabase(TEntity entity, Guid id);
         void UpdateInDatabase(TEntity entity, string id);
+        void UpdateInDatabase(TEntity entity, int id);
         void DeleteFromDatabase(TEntity entity);
         void DeleteRangeFromDatabase(IEnumerable<TEntity> entities);
         void Save();

@@ -7,6 +7,7 @@ namespace TRXpense.Dal.Database
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<CostCenter> CostCenters { get; set; }
+        public DbSet<Vehicle> Vehicles { get; set; }
 
         // ApplicationUser override
         //public override IDbSet<ApplicationUser> Users { get; set; }

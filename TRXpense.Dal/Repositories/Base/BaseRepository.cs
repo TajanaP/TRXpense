@@ -72,6 +72,12 @@ namespace TRXpense.Dal.Repositories.Base
             _dbContext.Entry(baseEntity).CurrentValues.SetValues(entity);
         }
 
+        public void UpdateInDatabase(TEntity entity, int id)
+        {
+            var baseEntity = _dbContext.Set<TEntity>().Find(id);
+            _dbContext.Entry(baseEntity).CurrentValues.SetValues(entity);
+        }
+
         public void DeleteFromDatabase(TEntity entity)
         {
             _dbContext.Set<TEntity>().Remove(entity);

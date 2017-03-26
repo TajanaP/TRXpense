@@ -1,0 +1,51 @@
+﻿@model TRXpense.App.Web.ViewModels.VehicleVM
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title" id="myModalLabel">Manage Vehicle</h4>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+
+        @using (Html.BeginForm("Save", "Vehicle", FormMethod.Post))
+        {
+            <div class="modal-body">
+                @Html.ValidationSummary(true, "Please fix the following errors.")
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Brand)
+                    @Html.TextBoxFor(m => m.Brand, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Brand)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Model)
+                    @Html.TextBoxFor(m => m.Model, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Model)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ProductionYear)
+                    @Html.TextBoxFor(m => m.ProductionYear, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.ProductionYear)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Registration)
+                    @Html.TextBoxFor(m => m.Registration, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Registration)
+                </div>
+                <div>
+                    @Html.HiddenFor(m => m.Id)
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="submit" id="approve-btn" class="btn btn-primary">Save</button>
+            </div>
+        }
+    </div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+}
