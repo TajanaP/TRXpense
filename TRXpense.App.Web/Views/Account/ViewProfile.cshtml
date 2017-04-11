@@ -1,0 +1,86 @@
+﻿@model TRXpense.App.Web.ViewModels.RegisterViewModelEdit
+
+@{
+    ViewBag.Title = "ViewProfile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@Model.FirstName @Model.LastName</h1>
+<hr />
+
+<div class="col-md-offset-1">
+    <div id="info">
+        <h3>Personal info</h3>
+    </div>
+
+    <div class="col-md-offset-1">
+        <table>
+            <thead>
+                <tr>
+                    <td style="text-align:left" width="150px"><span>Date of Birth</span></td>
+                    <td>@Model.DateOfBirth.ToShortDateString()</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align:left"><span>OIB</span></td>
+                    <td>@Model.OIB</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="col-md-offset-1">
+    <div id="info">
+        <h3>Contact info</h3>
+    </div>
+
+    <div class="col-md-offset-1">
+        <table>
+            <thead>
+                <tr>
+                    <td style="text-align:left"  width="150px"><span>Email</span></td>
+                    <td>@Model.Email</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align:left"><span>Phone</span></td>
+                    <td>@Model.Phone</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="col-md-offset-1">
+    <div id="info">
+        <h3>Company info</h3>
+    </div>
+
+    <div class="col-md-offset-1">
+        <table>
+            <thead>
+                <tr>
+                    <td style="text-align:left"  width="150px"><span>Position</span></td>
+                    <td>@Model.Position</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align:left"><span>Cost Center</span></td>
+                    <td>@Model.CostCenter.Name</td>
+                </tr>
+                <tr>
+                    <td style="text-align:left"><span>Role</span></td>
+                    <td>@Model.UserRole</td>
+                </tr>
+                <tr>
+                    <td style="text-align:left"><span>Superior</span></td>
+                    <td>@Model.Superior.LastName</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

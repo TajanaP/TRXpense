@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TRXpense.Bll.Model.ApplicationUser>
+﻿@model IEnumerable<TRXpense.App.Web.ViewModels.RegisterViewModel>
 
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -11,8 +11,8 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <td><strong>Name</strong></td>
-                        <td><strong>OIB</strong></td>
+                        <td><h4>Name</h4></td>
+                        <td><h4>OIB</h4></td>
                     </tr>
                 </thead>
                 <tbody>
@@ -22,7 +22,6 @@
                             <td>@user.FirstName @user.LastName</td>
                             <td>@user.OIB</td>
                         </tr>
-
                     }
                 </tbody>
             </table>

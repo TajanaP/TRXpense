@@ -1,40 +1,75 @@
-﻿@model IEnumerable<TRXpense.Bll.Model.CostCenter>
+﻿@model IEnumerable<TRXpense.App.Web.ViewModels.CostCenterVM>
 
 @{
     ViewBag.Title = "Cost Centers";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@using PagedList.Mvc;
+@using PagedList;
+
 <h1>Manage Cost Centers</h1>
 <hr />
 
-<p>
-    @Html.ActionLink("Create Cost Center", "Create", "CostCenter", new { @class = "modal-link btn btn-primary" })
-</p>
+<form method="get" action="@Url.Action("Index", "CostCenter")">
+    <div class="col-md-4 col-md-offset-1">
+        <div id="custom-search-input">
+            <div class="input-group col-md-12">
+                <input name="query" class="form-control input-lg" />
+                <span class="input-group-btn">
+                    <button class="btn btn-info btn-lg" type="submit">
+                        <i class="glyphicon glyphicon-search"></i>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </div>
+</form>
+
+<span class="create-button pull-right">@Html.ActionLink(" ", "Create", "CostCenter", new { @class = "modal-link btn btn-success glyphicon glyphicon-plus" })</span>
 
 <div class="container">
-    <table id="costCenters" class="table table-hover">
-        <thead>
-            <tr>
-                <td><strong>Cost Center</strong></td>
-                <td><strong>Description</strong></td>
-                <td></td>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var costCenter in Model)
-            {
-                <tr id="row_@costCenter.Id">
-                    <td>@Html.ActionLink(costCenter.Name, "Details", "CostCenter", new { id = costCenter.Id }, new { @class = "modal-link" })</td>
-                    <td>@costCenter.Description</td>
-                    <td>
-                        @Html.ActionLink(" ", "Edit", "CostCenter", new { id = costCenter.Id }, new { @class = "modal-link glyphicon glyphicon-pencil" }) |
-                        <a href="#" onclick="ConfirmDelete(@costCenter.Id)"><i class="glyphicon glyphicon-trash"></i> </a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="panel panel-default panel-table">
+                <div class="panel-body">
+                    <table id="costCenters" class="table table-hover">
+                        <thead>
+                            <tr>
+                                <td><h4>Name</h4></td>
+                                <td><h4>Description</h4></td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var costCenter in Model)
+                            {
+                                <tr id="row_@costCenter.Id">
+                                    <td>@Html.ActionLink(costCenter.Name, "Details", "CostCenter", new { id = costCenter.Id }, new { @class = "modal-link" })</td>
+                                    <td>@costCenter.Description</td>
+                                    <td>
+                                        @Html.ActionLink(" ", "Edit", "CostCenter", new { id = costCenter.Id }, new { @class = "modal-link btn btn-default glyphicon glyphicon-pencil" })
+                                        <a href="#" class="btn btn-danger" onclick="ConfirmDelete(@costCenter.Id)"><i class="glyphicon glyphicon-trash"></i> </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col col-xs-offset-3 col-xs-6">
+                            <nav aria-label="Page navigation" class="text-center">
+                                <ul class="pagination">
+                                    @Html.PagedListPager((IPagedList)ViewBag.onePageOfCostCenters, page => Url.Action("Index", new { page }))
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="modal fade" id="deleteConfirmModal">
         <div class="modal-dialog">
@@ -95,7 +130,7 @@
                         });
                         $("#deleteConfirmModal").modal("hide");
                     }
-                    // if there are no employees in this CC
+                        // if there are no employees in this CC
                     else {
                         $("#deleteConfirmModal").modal("hide");
                         $("#row_" + ccId).remove();

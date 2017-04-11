@@ -18,7 +18,7 @@ namespace TRXpense.App.Web.Controllers
         // GET: Vehicle
         public ActionResult Index()
         {
-            var vehicles = _vehicleRepository.GetAllFromDatabaseEnumerable().ToList().MapToViews(); ;
+            var vehicles = _vehicleRepository.GetAllFromDatabaseEnumerable().ToList().MapToViews();
 
             return View(vehicles);
         }

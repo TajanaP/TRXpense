@@ -51,6 +51,15 @@ namespace TRXpense.App.Web.Controllers
             return PartialView("_Details", user);
         }
 
+        // individual profile to be viewed by employee
+        public ActionResult ViewProfile()
+        {
+            var userId = User.Identity.GetUserId();
+            var user = _context.Users.Include(c => c.CostCenter).Include(s => s.Superior).SingleOrDefault(u => u.Id == userId).MapToViewEdit();
+
+            return View(user);
+        }
+
         // GET: /Account/Register
         [Authorize(Roles = "Admin")]
         public ActionResult Register()

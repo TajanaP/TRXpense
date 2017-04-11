@@ -35,6 +35,11 @@
                                 <li><a href="/Account">Employee</a></li>
                             </ul>
                         </li>
+                        <li>@Html.ActionLink("My Profile", "ViewProfile", "Account")</li>
+                    }
+                    else if (User.Identity.IsAuthenticated)
+                    {
+                        <li>@Html.ActionLink("My Profile", "ViewProfile", "Account")</li>
                     }
 
                 </ul>

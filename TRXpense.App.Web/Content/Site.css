@@ -2,6 +2,7 @@
     padding-top: 50px;
     padding-bottom: 20px;
     font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 15px;
 }
 
 /* Set padding to keep content from hitting the edges */
@@ -51,7 +52,7 @@ textarea {
     font-weight: bold;
     border: 1px solid;
     border-radius: 7px;
-    margin-top: 20px;
+    /*margin-top: 20px;*/
     text-transform: none;
 }
 
@@ -100,13 +101,6 @@ select.input-validation-error {
     padding-left: 30px;
 }
 
-.table {
-    width: 100%;
-    max-width: 100%;
-    margin-bottom: 20px;
-    margin-top: 20px;
-}
-
 a:hover, a:focus {
     color: #93c54b;
     text-decoration: none;
@@ -117,13 +111,104 @@ a:focus {
     outline-offset: 0px;
 }
 
-.glyphicon-trash {
+/* -------------------------------- 
+    Tables
+-------------------------------- */
+
+#costCenters {
+    width: 900px;
+    margin: 20px;
+}
+
+.btn-group .btn {
+    transition: background-color .3s ease;
+}
+
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+    border-top: 1px solid #e6e6e6;
+}
+
+.panel-default {
+    border-color: #e6e6e6;
+}
+
+#custom-search-input button {
+    border-left: solid 1px #e6e6e6;
+}
+
+.panel-table .panel-body {
+    padding: 0;
+}
+
+.table > thead > tr > th {
+    border-bottom: none;
+}
+
+.panel-footer, .panel-table .panel-body .table-bordered {
+    border-style: none;
+    margin: 0;
+}
+
+.pagination > li > a, .pagination > li > span {
+    border-radius: 50% !important;
+    margin: 0 5px;
+}
+
+.pagination {
+    margin: 0;
+}
+
+.panel-body {
+    padding: 0px;
+}
+
+.panel {
+    margin-top: 20px;
+}
+
+#custom-search-input{
+    padding: 3px;
+    border: solid 1px #E4E4E4;
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+#custom-search-input input{
+    border: 0;
+    box-shadow: none;
+}
+
+#custom-search-input button{
+    margin: 2px 0 0 0;
+    background: none;
+    box-shadow: none;
+    border: 0;
+    color: #666666;
+    padding: 0 8px 0 10px;
+    border-left: solid 1px #ccc;
+}
+
+#custom-search-input button:hover{
+    border: 0;
+    box-shadow: none;
+    border-left: solid 1px #ccc;
+}
+
+#custom-search-input .glyphicon-search{
+    font-size: 23px;
+}
+
+.create-button.pull-right {
+    margin-right: 82px;
+}
+
+/*.glyphicon-trash {
     color: #e20a0a;
 }
 
 .glyphicon-trash:hover, .glyphicon-trash:focus, .glyphicon-trash:active {
     color: #e20a0a;
-}
+}*/
 
 /* -------------------------------- 
     Index page
@@ -211,4 +296,63 @@ a:focus {
 .input-group-addon {
     border-radius: 8px;
     width: 88px;
+}
+
+/* -------------------------------- 
+    My Profile page
+-------------------------------- */
+
+#info {
+    margin-top: 40px;
+    margin-bottom: 25px;
+    color: #93c54b;
+}
+
+.my-profile-panel {
+    max-width: 600px;
+    margin: 0 auto;
+    border-radius: 0px;
+}
+.panel-heading-landing {
+    background: #f7f7f7 !important; 
+    padding: 20px !important; 
+    border-top-left-radius: 10px !important;  
+    border-top-right-radius: 10px !important; 
+    border: solid 2px #5CB85C !important; 
+    border-bottom: none !important;
+}
+.panel-heading-landing-box {
+    background: #5CB85C !important; 
+    color: #fff !important; 
+    font-size: 16px !important; 
+    padding: 3px !important; 
+    border: solid 2px #5CB85C !important; 
+    border-top: none !important;
+}
+.panel-title-landing {
+    color: #626367 !important;
+    font-size: 25px;
+    font-weight: bold;
+}
+.panel .panel-heading, .panel .panel-title {
+    font-size: 20px;
+    line-height: 22px;
+    font-weight: 500;
+    /*text-transform: uppercase;*/
+    /*color: #fff;*/
+}
+.panel-body-landing {
+    border: solid 2px #ccc !important; 
+    border-top: none !important; 
+    border-bottom: none !important;
+}
+.panel-footer-landing {
+    border: solid 2px #ccc !important; 
+    border-bottom-left-radius: 10px !important; 
+    border-bottom-right-radius: 10px !important; 
+    border-top: none !important;
+}
+.panel-heading {
+    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
 }

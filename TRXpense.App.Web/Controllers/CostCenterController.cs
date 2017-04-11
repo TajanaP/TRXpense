@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using PagedList;
+using System.Linq;
 using System.Web.Mvc;
-using TRXpense.Bll.Model;
+using TRXpense.App.Web.Mappers;
+using TRXpense.App.Web.ViewModels;
 using TRXpense.Dal.Repositories;
 
 namespace TRXpense.App.Web.Controllers
@@ -18,17 +20,34 @@ namespace TRXpense.App.Web.Controllers
         }
 
         // GET: CostCenter
-        public ActionResult Index()
+        public ActionResult Index(int? page, string query = null)
         {
-            var costCenters = _costCenterRepository.GetAllFromDatabaseEnumerable().ToList();
+            var costCenters = _costCenterRepository.GetAllFromDatabaseEnumerable().ToList().MapToViews();
 
-            return View(costCenters);
+            // paging
+            int pageSize = 5;
+            var pageNumber = page ?? 1; // if no page was specified in the querystring, default to the first page (1)
+            var onePageOfCostCenters = costCenters.ToPagedList(pageNumber, pageSize); // will only contain 5 products max because of the pageSize
+
+            // searching
+            if (!string.IsNullOrEmpty(query))
+            {
+                var costCenterSearched = _costCenterRepository.GetAllFromDatabaseEnumerable()
+                    .Where(c => c.Name.ToLower().Contains(query.ToLower()) || c.Description.ToLower().Contains(query.ToLower()))
+                    .ToList()
+                    .MapToViews();
+
+                onePageOfCostCenters = costCenterSearched.ToPagedList(pageNumber, pageSize);
+            }
+
+            ViewBag.onePageOfCostCenters = onePageOfCostCenters;
+            return View(onePageOfCostCenters);
         }
 
         // GET: CostCenter/Details/Id
         public ActionResult Details(int id)
         {
-            var users = _applicationUserRepository.GetAllFromDatabaseEnumerable().Where(u => u.CostCenterId == id).ToList();
+            var users = _applicationUserRepository.GetAllFromDatabaseEnumerable().Where(u => u.CostCenterId == id).ToList().MapToViews();
 
             return PartialView("_Details", users);
         }
@@ -41,7 +60,7 @@ namespace TRXpense.App.Web.Controllers
 
         // POST: /CostCenter/Create
         [HttpPost]
-        public ActionResult Save(CostCenter costCenter)
+        public ActionResult Save(CostCenterVM costCenter)
         {
             ModelState.Remove("Id");
 
@@ -49,14 +68,9 @@ namespace TRXpense.App.Web.Controllers
                 return RedirectToAction("Index");
 
             if (costCenter.Id == 0)
-                _costCenterRepository.AddToDatabase(costCenter);
+                _costCenterRepository.AddToDatabase(costCenter.MapToModel());
             else
-            {
-                var costCenterInDB = _costCenterRepository.FindById(costCenter.Id);
-
-                costCenterInDB.Name = costCenter.Name;
-                costCenterInDB.Description = costCenter.Description;
-            }
+                _costCenterRepository.UpdateInDatabase(costCenter.MapToModel(), costCenter.Id);
 
             _costCenterRepository.Save();
 
@@ -66,7 +80,7 @@ namespace TRXpense.App.Web.Controllers
         // GET: CostCenter/Edit
         public ActionResult Edit(int id)
         {
-            var costCenter = _costCenterRepository.FindById(id);
+            var costCenter = _costCenterRepository.FindById(id).MapToView();
 
             if (costCenter == null)
                 return HttpNotFound();
