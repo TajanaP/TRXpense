@@ -48,8 +48,10 @@
                                     <td>@Html.ActionLink(costCenter.Name, "Details", "CostCenter", new { id = costCenter.Id }, new { @class = "modal-link" })</td>
                                     <td>@costCenter.Description</td>
                                     <td>
-                                        @Html.ActionLink(" ", "Edit", "CostCenter", new { id = costCenter.Id }, new { @class = "modal-link btn btn-default glyphicon glyphicon-pencil" })
-                                        <a href="#" class="btn btn-danger" onclick="ConfirmDelete(@costCenter.Id)"><i class="glyphicon glyphicon-trash"></i> </a>
+                                        <div class="controlButtons">
+                                            @Html.ActionLink(" ", "Edit", "CostCenter", new { id = costCenter.Id }, new { @class = "modal-link btn btn-default glyphicon glyphicon-pencil" })
+                                            <a href="#" class="btn btn-danger" onclick="ConfirmDelete(@costCenter.Id)"><i class="glyphicon glyphicon-trash"></i> </a>
+                                        </div>
                                     </td>
                                 </tr>
                             }

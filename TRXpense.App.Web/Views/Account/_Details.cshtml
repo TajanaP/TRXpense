@@ -8,48 +8,127 @@
 <div class="container-fluid">
     <div class="row">
         <div class="modal-body">
-            <table class="table">
+
+            <div class="col-md-offset-1">
+                <div id="info">
+                    <h4>Personal info</h4>
+                </div>
+
+                <div class="col-md-offset-1">
+                    <table>
+                        <thead>
+                            <tr>
+                                <td width="150px"><span>Date of Birth</span></td>
+                                <td>@Model.DateOfBirth.ToShortDateString()</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span>OIB</span></td>
+                                <td>@Model.OIB</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="col-md-offset-1">
+                <div id="info">
+                    <h4>Contact info</h4>
+                </div>
+
+                <div class="col-md-offset-1">
+                    <table>
+                        <thead>
+                            <tr>
+                                <td width="150px"><span>Email</span></td>
+                                <td>@Model.Email</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span>Phone</span></td>
+                                <td>@Model.Phone</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="col-md-offset-1">
+                <div id="info">
+                    <h4>Company info</h4>
+                </div>
+
+                <div class="col-md-offset-1">
+                    <table>
+                        <thead>
+                            <tr>
+                                <td width="150px"><span>Position</span></td>
+                                <td>@Model.Position</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span>Cost Center</span></td>
+                                <td>@Model.CostCenter.Name</td>
+                            </tr>
+                            <tr>
+                                <td><span>Role</span></td>
+                                <td>@Model.UserRole</td>
+                            </tr>
+                            <tr>
+                                <td><span>Superior</span></td>
+                                <td>@Model.Superior.LastName</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            @*<table class="table">
                 <thead>
                     <tr>
-                        <td><strong>Name</strong></td>
+                        <td>Name</td>
                         <td>@Model.FirstName @Model.LastName</td>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>Email</strong></td>
+                        <td>Email</td>
                         <td>@Model.Email</td>
                     </tr>
                     <tr>
-                        <td><strong>Date of Birth</strong></td>
+                        <td>Date of Birth</td>
                         <td>@Model.DateOfBirth.ToShortDateString()</td>
                     </tr>
                     <tr>
-                        <td><strong>OIB</strong></td>
+                        <td>OIB</td>
                         <td>@Model.OIB</td>
                     </tr>
                     <tr>
-                        <td><strong>Phone</strong></td>
+                        <td>Phone</td>
                         <td>@Model.Phone</td>
                     </tr>
                     <tr>
-                        <td><strong>Cost Center</strong></td>
+                        <td>Cost Center</td>
                         <td>@Model.CostCenter.Name</td>
                     </tr>
                     <tr>
-                        <td><strong>Position</strong></td>
+                        <td>Position</td>
                         <td>@Model.Position</td>
                     </tr>
                     <tr>
-                        <td><strong>Role</strong></td>
+                        <td>Role</td>
                         <td>@Model.UserRole</td>
                     </tr>
                     <tr>
-                        <td><strong>Superior</strong></td>
+                        <td>Superior</td>
                         <td>@Model.Superior.LastName</td>
                     </tr>
                 </tbody>
-            </table>
+            </table>*@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

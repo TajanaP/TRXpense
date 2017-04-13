@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using PagedList;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -31,14 +32,34 @@ namespace TRXpense.App.Web.Controllers
             _applicationUserRepository = new ApplicationUserRepository();
         }
 
-        public ActionResult Index()
+        public ActionResult Index(int? page, string query = null)
         {
-            var model = _applicationUserRepository.GetAllFromDatabaseEnumerable().ToList().MapToViews();
+            var employees = _applicationUserRepository.GetAllFromDatabaseEnumerable().ToList().MapToViews();
 
             if (TempData["message"] != null)
                 ViewBag.Message = TempData["message"].ToString();
 
-            return View(model);
+            // paging
+            int pageSize = 5;
+            var pageNumber = page ?? 1; // if no page was specified in the querystring, default to the first page (1)
+            var onePageOfEmployees = employees.ToPagedList(pageNumber, pageSize); // will only contain 5 products max because of the pageSize
+
+            // searching
+            if (!string.IsNullOrEmpty(query))
+            {
+                var employeeSearched = _applicationUserRepository.GetAllFromDatabaseEnumerable()
+                    .Where(u => u.FirstName.ToLower().Contains(query.ToLower())
+                        || u.LastName.ToLower().Contains(query.ToLower())
+                        || u.Position.ToLower().Contains(query.ToLower())
+                        || u.UserRole.ToLower().Equals(query.ToLower()))
+                    .ToList()
+                    .MapToViews();
+
+                onePageOfEmployees = employeeSearched.ToPagedList(pageNumber, pageSize);
+            }
+
+            ViewBag.onePageOfEmployees = onePageOfEmployees;
+            return View(onePageOfEmployees);
         }
 
         public ActionResult Details(string id)
@@ -129,7 +150,7 @@ namespace TRXpense.App.Web.Controllers
                 }
                 else
                 {
-                    TempData["message"] = "You tried to create user with username (email) that is already taken. Email must be unique for each user!";
+                    TempData["message"] = "You tried to create new user with username (email) that is already taken. Email must be unique for each user!";
                     return RedirectToAction("Index");
                 }
             }

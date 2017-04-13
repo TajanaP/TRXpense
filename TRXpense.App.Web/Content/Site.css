@@ -44,7 +44,8 @@ textarea {
     border: 1px solid #d9534f;
     border-radius: 5px;
     padding: 10px;
-    margin-top: 50px;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .btn {
@@ -115,9 +116,13 @@ a:focus {
     Tables
 -------------------------------- */
 
-#costCenters {
+#costCenters, #vehicles, #roles, #employees {
     width: 900px;
     margin: 20px;
+}
+
+.controlButtons {
+    float: right;
 }
 
 .btn-group .btn {
@@ -130,10 +135,6 @@ a:focus {
 
 .panel-default {
     border-color: #e6e6e6;
-}
-
-#custom-search-input button {
-    border-left: solid 1px #e6e6e6;
 }
 
 .panel-table .panel-body {
@@ -185,7 +186,7 @@ a:focus {
     border: 0;
     color: #666666;
     padding: 0 8px 0 10px;
-    border-left: solid 1px #ccc;
+    border-left: solid 1px #e6e6e6;
 }
 
 #custom-search-input button:hover{
@@ -202,13 +203,9 @@ a:focus {
     margin-right: 82px;
 }
 
-/*.glyphicon-trash {
-    color: #e20a0a;
+.glyphicon {
+    font-weight: normal;
 }
-
-.glyphicon-trash:hover, .glyphicon-trash:focus, .glyphicon-trash:active {
-    color: #e20a0a;
-}*/
 
 /* -------------------------------- 
     Index page

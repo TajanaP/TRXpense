@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
+using PagedList;
 using System;
 using System.Linq;
 using System.Web.Mvc;
@@ -16,14 +17,28 @@ namespace TRXpense.App.Web.Controllers
             _context = new ApplicationDbContext();
         }
 
-        public ActionResult Index()
+        public ActionResult Index(int? page, string query = null)
         {
             var roles = _context.Roles.ToList();
 
             if (TempData["message"] != null)
                 ViewBag.Message = TempData["message"].ToString();
 
-            return View(roles);
+            // paging
+            int pageSize = 5;
+            var pageNumber = page ?? 1; // if no page was specified in the querystring, default to the first page (1)
+            var onePageOfRoles = roles.ToPagedList(pageNumber, pageSize); // will only contain 5 products max because of the pageSize
+
+            // searching
+            if (!string.IsNullOrEmpty(query))
+            {
+                var roleSearched = _context.Roles.Where(r => r.Name.ToLower().Contains(query.ToLower())).ToList();
+
+                onePageOfRoles = roleSearched.ToPagedList(pageNumber, pageSize);
+            }
+
+            ViewBag.onePageOfRoles = onePageOfRoles;
+            return View(onePageOfRoles);
         }
 
         public ActionResult Details(string roleName)
@@ -133,7 +148,7 @@ namespace TRXpense.App.Web.Controllers
             }
             else
             {
-                TempData["message"] = "There are employees assigned to this Cost Center! You can only delete Cost Centers with no employees.";
+                TempData["message"] = "There are employees assigned to this Role! You can only delete roles with no employees.";
                 return RedirectToAction("Index");
             }
 

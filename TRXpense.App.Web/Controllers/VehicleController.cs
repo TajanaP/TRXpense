@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using PagedList;
+using System.Linq;
 using System.Web.Mvc;
 using TRXpense.App.Web.Mappers;
 using TRXpense.App.Web.ViewModels;
@@ -16,11 +17,31 @@ namespace TRXpense.App.Web.Controllers
         }
 
         // GET: Vehicle
-        public ActionResult Index()
+        public ActionResult Index(int? page, string query = null)
         {
             var vehicles = _vehicleRepository.GetAllFromDatabaseEnumerable().ToList().MapToViews();
 
-            return View(vehicles);
+            // paging
+            int pageSize = 5;
+            var pageNumber = page ?? 1; // if no page was specified in the querystring, default to the first page (1)
+            var onePageOfVehicles = vehicles.ToPagedList(pageNumber, pageSize); // will only contain 5 products max because of the pageSize
+
+            // searching
+            if (!string.IsNullOrEmpty(query))
+            {
+                var vehicleSearched = _vehicleRepository.GetAllFromDatabaseEnumerable()
+                    .Where(v => v.Brand.ToLower().Contains(query.ToLower())
+                        || v.Model.ToLower().Contains(query.ToLower())
+                        || v.Registration.ToLower().Contains(query.ToLower())
+                        || v.ProductionYear.Equals(int.Parse(query)))
+                    .ToList()
+                    .MapToViews();
+
+                onePageOfVehicles = vehicleSearched.ToPagedList(pageNumber, pageSize);
+            }
+
+            ViewBag.onePageOfVehicles = onePageOfVehicles;
+            return View(onePageOfVehicles);
         }
 
         public ActionResult Create()
@@ -59,10 +80,9 @@ namespace TRXpense.App.Web.Controllers
         public JsonResult Delete(int id)
         {
             var vehicleInDB = _vehicleRepository.FindById(id);
-            //var vehicles = _vehicleRepository.GetAllFromDatabaseEnumerable().Where(u => u.Id == id).ToList();
             bool result = false;
 
-            if (/*vehicles.Count == 0 && */vehicleInDB != null)
+            if (vehicleInDB != null)
             {
                 _vehicleRepository.DeleteFromDatabase(vehicleInDB);
                 _vehicleRepository.Save();
