@@ -177,6 +177,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CostCenterController.cs" />
+    <Compile Include="Controllers\CountryAllowanceController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\RoleController.cs" />
@@ -186,9 +187,11 @@
     </Compile>
     <Compile Include="Mappers\ApplicationUserMapper.cs" />
     <Compile Include="Mappers\CostCenterMapper.cs" />
+    <Compile Include="Mappers\CountryAllowanceMapper.cs" />
     <Compile Include="Mappers\VehicleMapper.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs" />
     <Compile Include="ViewModels\CostCenterVM.cs" />
+    <Compile Include="ViewModels\CountryAllowanceVM.cs" />
     <Compile Include="ViewModels\IdentityModels.cs" />
     <Compile Include="ViewModels\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -364,6 +367,8 @@
     <Content Include="Views\Vehicle\Index.cshtml" />
     <Content Include="Views\Vehicle\_VehicleForm.cshtml" />
     <Content Include="Views\Account\ViewProfile.cshtml" />
+    <Content Include="Views\CountryAllowance\Index.cshtml" />
+    <Content Include="Views\CountryAllowance\_CountryAllowanceForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

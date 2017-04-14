@@ -116,7 +116,7 @@ a:focus {
     Tables
 -------------------------------- */
 
-#costCenters, #vehicles, #roles, #employees {
+#costCenters, #vehicles, #roles, #employees, #countryAllowance {
     width: 900px;
     margin: 20px;
 }
