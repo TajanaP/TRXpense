@@ -1,17 +1,17 @@
-﻿@model IEnumerable<TRXpense.App.Web.ViewModels.CountryAllowanceVM>
+﻿@model IEnumerable<TRXpense.App.Web.ViewModels.ExpenseCategoryVM>
 
 @{
-    ViewBag.Title = "Daily Allowance by Country";
+    ViewBag.Title = "Expense Categories";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @using PagedList.Mvc;
 @using PagedList;
 
-<h2>Manage Daily Allowance by Country</h2>
+<h2>Manage Expense Categories</h2>
 <hr />
 
-<form method="get" action="@Url.Action("Index", "CountryAllowance")">
+<form method="get" action="@Url.Action("Index", "ExpenseCategory")">
     <div class="col-md-4 col-md-offset-1">
         <div id="custom-search-input">
             <div class="input-group col-md-12">
@@ -26,33 +26,31 @@
     </div>
 </form>
 
-<span class="create-button pull-right">@Html.ActionLink(" ", "Create", "CountryAllowance", new { @class = "modal-link btn btn-success glyphicon glyphicon-plus" })</span>
+<span class="create-button pull-right">@Html.ActionLink(" ", "Create", "ExpenseCategory", new { @class = "modal-link btn btn-success glyphicon glyphicon-plus" })</span>
 
 <div class="container">
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
             <div class="panel panel-default panel-table">
                 <div class="panel-body">
-                    <table id="countryAllowance" class="table table-hover">
+                    <table id="expenseCategory" class="table table-hover">
                         <thead>
                             <tr>
-                                <td><h4>Country</h4></td>
-                                <td><h4>Amount</h4></td>
-                                <td><h4>Currency</h4></td>
+                                <td><h4>Name</h4></td>
+                                <td><h4>Account</h4></td>
                                 <td></td>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var allowance in Model)
+                            @foreach (var expenseCategory in Model)
                             {
-                                <tr id="row_@allowance.Id">
-                                    <td>@allowance.Country</td>
-                                    <td>@allowance.Amount</td>
-                                    <td>@allowance.Currency</td>
+                                <tr id="row_@expenseCategory.Id">
+                                    <td>@expenseCategory.Name</td>
+                                    <td>@expenseCategory.Account</td>
                                     <td>
                                         <div class="controlButtons">
-                                            @Html.ActionLink(" ", "Edit", "CountryAllowance", new { id = allowance.Id }, new { @class = "modal-link btn btn-default glyphicon glyphicon-pencil" })
-                                            <a href="#" class="btn btn-danger" onclick="ConfirmDelete(@allowance.Id)"><i class="glyphicon glyphicon-trash"></i> </a>
+                                            @Html.ActionLink(" ", "Edit", "ExpenseCategory", new { id = expenseCategory.Id }, new { @class = "modal-link btn btn-default glyphicon glyphicon-pencil" })
+                                            <a href="#" class="btn btn-danger" onclick="ConfirmDelete(@expenseCategory.Id)"><i class="glyphicon glyphicon-trash"></i> </a>
                                         </div>
                                     </td>
                                 </tr>
@@ -65,7 +63,7 @@
                         <div class="col col-xs-offset-3 col-xs-6">
                             <nav aria-label="Page navigation" class="text-center">
                                 <ul class="pagination">
-                                    @Html.PagedListPager((IPagedList)ViewBag.onePageOfAllowances, page => Url.Action("Index", new { page }))
+                                    @Html.PagedListPager((IPagedList)ViewBag.onePageOfExpenseCategories, page => Url.Action("Index", new { page }))
                                 </ul>
                             </nav>
                         </div>
@@ -83,11 +81,11 @@
                     <h4 class="modal-title">Delete</h4>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to delete this daily allowance and country? </p>
+                    <p>Are you sure you want to delete this expense category? </p>
                 </div>
                 <div class="modal-footer">
                     <a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
-                    <a href="#" class="btn btn-danger" onclick="DeleteAllowance()">Confirm</a>
+                    <a href="#" class="btn btn-danger" onclick="DeleteExpenseCategory()">Confirm</a>
                 </div>
             </div>
         </div>
@@ -107,15 +105,15 @@
             $("#deleteConfirmModal").modal('show');
         }
 
-        var DeleteAllowance = function () {
+        var DeleteExpenseCategory = function () {
 
-            var caId = $("#hiddenId").val();
+            var ecId = $("#hiddenId").val();
 
             $.ajax({
 
                 type: "POST",
                 url: '@Url.Action("Delete")', @* or "/Vehicle/Delete"*@
-                data: { id: caId },
+                data: { id: ecId },
                 success: function (result) {
                     // if vehicle is assigned to employee
                     //if (result != true) {
@@ -136,7 +134,7 @@
                     //}
                     // if vehicle is not assinged to employee
                     $("#deleteConfirmModal").modal("hide");
-                    $("#row_" + caId).remove();
+                    $("#row_" + ecId).remove();
                 }
             })
         }

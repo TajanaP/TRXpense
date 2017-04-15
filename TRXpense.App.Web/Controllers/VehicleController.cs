@@ -29,11 +29,12 @@ namespace TRXpense.App.Web.Controllers
             // searching
             if (!string.IsNullOrEmpty(query))
             {
+                int i;
                 var vehicleSearched = _vehicleRepository.GetAllFromDatabaseEnumerable()
                     .Where(v => v.Brand.ToLower().Contains(query.ToLower())
                         || v.Model.ToLower().Contains(query.ToLower())
                         || v.Registration.ToLower().Contains(query.ToLower())
-                        || v.ProductionYear.Equals(int.Parse(query)))
+                        || v.ProductionYear.Equals(int.TryParse(query, out i) ? i : (int?)null))
                     .ToList()
                     .MapToViews();
 

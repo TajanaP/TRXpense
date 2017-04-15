@@ -9,6 +9,7 @@ namespace TRXpense.Dal.Database
         public DbSet<CostCenter> CostCenters { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<CountryAllowance> CountyAllowances { get; set; }
+        public DbSet<ExpenseCategory> ExpenseCategories { get; set; }
 
         // ApplicationUser override
         //public override IDbSet<ApplicationUser> Users { get; set; }

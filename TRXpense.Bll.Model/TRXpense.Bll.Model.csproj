@@ -60,6 +60,7 @@
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\CostCenter.cs" />
     <Compile Include="Models\CountryAllowance.cs" />
+    <Compile Include="Models\ExpenseCategory.cs" />
     <Compile Include="Models\Vehicle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
