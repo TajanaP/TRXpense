@@ -1,0 +1,149 @@
+﻿@model IEnumerable<TRXpense.App.Web.ViewModels.TravelReportVM>
+
+@{
+    ViewBag.Title = "Travel Reports";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using PagedList.Mvc;
+@using PagedList;
+
+<h2>Manage Travel Reports</h2>
+<hr />
+
+<form method="get" action="@Url.Action("Index", "TravelReport")">
+    <div class="col-md-4 col-md-offset-1">
+        <div id="custom-search-input">
+            <div class="input-group col-md-12">
+                <input name="query" class="form-control input-lg" />
+                <span class="input-group-btn">
+                    <button class="btn btn-info btn-lg" type="submit">
+                        <i class="glyphicon glyphicon-search"></i>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </div>
+</form>
+
+<span class="create-button pull-right">@Html.ActionLink(" ", "Create", "TravelReport", new { @class = "btn btn-success glyphicon glyphicon-plus" })</span>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="panel panel-default panel-table">
+                <div class="panel-body">
+                    <table id="travelOrders" class="table table-hover">
+                        <thead>
+                            <tr>
+                                <td><h4>Employee</h4></td>
+                                <td><h4>Country</h4></td>
+                                <td><h4>Departure</h4></td>
+                                <td><h4>Return</h4></td>
+                                <td><h4>Expense</h4></td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var travelReport in Model)
+                            {
+                                <tr id="row_@travelReport.Id">
+                                    <td>@travelReport.Employee.FirstName @travelReport.Employee.LastName</td>
+                                    <td>@travelReport.Country.Country</td>
+                                    <td>@travelReport.Departure</td>
+                                    <td>@travelReport.Return</td>
+                                    <td>@travelReport.ExpenseSum</td>
+                                    <td>
+                                        <div class="controlButtons">
+                                            @Html.ActionLink(" ", "Edit", "TravelReport", new { id = travelReport.Id }, new { @class = "btn btn-default glyphicon glyphicon-pencil" })
+                                            @Html.ActionLink(" ", "Details", "TravelReport", new { id = travelReport.Id }, new { @class = "modal-link btn btn-default glyphicon glyphicon-list" })
+                                            <a href="#" class="btn btn-danger" onclick="ConfirmDelete(@travelReport.Id)"><i class="glyphicon glyphicon-trash"></i> </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col col-xs-offset-3 col-xs-6">
+                            <nav aria-label="Page navigation" class="text-center">
+                                <ul class="pagination">
+                                    @Html.PagedListPager((IPagedList)ViewBag.onePageOfTravelReports, page => Url.Action("Index", new { page }))
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteConfirmModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <a href="#" class="close" data-dismiss="modal">&times;</a>
+                    <h4 class="modal-title">Delete</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this travel report? </p>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+                    <a href="#" class="btn btn-danger" onclick="DeleteTravelReport()">Confirm</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*hidden field for storing current itemId*@
+    <input type="hidden" id="hiddenId" />
+</div>
+
+@section scripts
+{
+    <script>
+
+        var ConfirmDelete = function (id) {
+
+            $("#hiddenId").val(id);
+            $("#deleteConfirmModal").modal('show');
+        }
+
+        var DeleteTravelReport = function () {
+
+            var trId = $("#hiddenId").val();
+
+            $.ajax({
+
+                type: "POST",
+                url: '@Url.Action("Delete")', @* or "/Vehicle/Delete"*@
+                data: { id: trId },
+                success: function (result) {
+                    // if vehicle is assigned to employee
+                    //if (result != true) {
+                    //    bootbox.dialog({
+                    //        message: "This vehicle is assigned to an employee"
+                    //            + "</br>"
+                    //            + "You can only delete vehicles that are not assigned to employees.",
+                    //        title: "<span style='color:#e20a0a;'><strong> Warning </strong></span> "
+                    //            + '<span style="color:#e20a0a;" class="glyphicon glyphicon-warning-sign"></span>',
+                    //        buttons: {
+                    //            success: {
+                    //                label: "Close",
+                    //                className: "btn-default",
+                    //            },
+                    //        }
+                    //    });
+                    //    $("#deleteConfirmModal").modal("hide");
+                    //}
+                    // if vehicle is not assinged to employee
+                    $("#deleteConfirmModal").modal("hide");
+                    $("#row_" + trId).remove();
+                }
+            })
+        }
+    </script>
+}

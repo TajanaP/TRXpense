@@ -10,6 +10,8 @@ namespace TRXpense.Dal.Database
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<CountryAllowance> CountyAllowances { get; set; }
         public DbSet<ExpenseCategory> ExpenseCategories { get; set; }
+        public DbSet<Expense> Expenses { get; set; }
+        public DbSet<TravelReport> TravelReports { get; set; }
 
         // ApplicationUser override
         //public override IDbSet<ApplicationUser> Users { get; set; }

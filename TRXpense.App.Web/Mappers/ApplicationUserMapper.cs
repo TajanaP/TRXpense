@@ -44,6 +44,27 @@ namespace TRXpense.App.Web.Mappers
             return result;
         }
 
+        public static ApplicationUser MapToModel(this RegisterViewModel view)
+        {
+            if (view == null)
+                return null;
+
+            return new ApplicationUser()
+            {
+                Id = view.Id,
+                FirstName = view.FirstName,
+                LastName = view.LastName,
+                Email = view.Email,
+                DateOfBirth = view.DateOfBirth,
+                OIB = view.OIB,
+                Phone = view.Phone,
+                Position = view.Position,
+                UserRole = view.UserRole,
+                CostCenter = view.CostCenter,
+                Superior = view.Superior
+            };
+        }
+
         // mapiranje iz Application user-a u RegisterViewModelEdit
         public static RegisterViewModelEdit MapToViewEdit(this ApplicationUser model)
         {

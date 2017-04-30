@@ -1,0 +1,122 @@
+﻿@model TRXpense.App.Web.ViewModels.TravelReportVM
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item"><a href="/TravelReport">Travel Reports</a></li>
+    <li class="breadcrumb-item active">Edit Travel Report</li>
+</ol>
+
+<h2>Edit Travel Report</h2>
+<hr />
+
+@using (Html.BeginForm("Edit", "TravelReport", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary("", new { @class = "alert alert-danger" })
+
+    <div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.EmployeeId, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @*@Html.TextBoxFor(m => m.EmployeeId, new { @class = "form-control", disabled = "disabled", @Value = ViewBag.User })*@
+                @Html.EditorFor(m => m.EmployeeId, new { htmlAttributes = new { @class = "form-control", disabled = "disabled", @Value = ViewBag.User } })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.CountryAllowanceId, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(m => m.CountryAllowanceId, (List<SelectListItem>)ViewBag.Countries, new { @class = "form-control", @onchange = "FillAllowanceAmount()", id = "Country" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.City, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.EditorFor(m => m.City, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.DailyAllowance, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.EditorFor(m => m.DailyAllowance, new { htmlAttributes = new { @class = "form-control", disabled = "disabled", id = "allowanceAmount", @Value = ViewBag.Allowance } })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.VehicleType, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.EnumDropDownListFor(m => m.VehicleType, "-- Select Vehicle --", new { @class = "form-control", id = "VehicleType" })
+            </div>
+        </div>
+        <div class="form-group" id="hiddenRegistrationDropdown">
+            @Html.LabelFor(m => m.VehicleId, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(m => m.VehicleId, (List<SelectListItem>)ViewBag.Vehicles, new { @class = "form-control", id = "CompanyVehicle" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.ReasonForTravel, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.EditorFor(m => m.ReasonForTravel, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Departure, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.EditorFor(m => m.Departure, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Return, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.EditorFor(m => m.Return, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.ExpenseSum, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.EditorFor(m => m.ExpenseSum, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+            </div>
+        </div>
+        <input type="submit" class="btn btn-primary col-md-offset-4" value="Save" />
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+
+        // show dropdown with registrations if "Company car" is selected
+        $(function () {
+            $('#VehicleType').change(function () {
+                var value = $(this).val();
+                if (value == '1') {
+                    $('#hiddenRegistrationDropdown').show();
+                    //$('#CompanyVehicle').removeAttr('disabled');
+                } else {
+                    $('#hiddenRegistrationDropdown').hide();
+                    //$('#CompanyVehicle').attr('disabled', 'disabled');
+                    $('#CompanyVehicle').val(0);
+                }
+            });
+        });
+
+        // fill allowance (amount & currency) based on selected country
+        function FillAllowanceAmount() {
+            var CountryId = $('#Country').val();
+            $.ajax({
+                url: '@Url.Action("GetAllowanceForCountry")',
+                dataType: "JSON",
+                data: { countryId: CountryId },
+                success: function (result) {
+                    $('#allowanceAmount').val(result);
+                }
+            });
+        }
+
+    </script>
+}
