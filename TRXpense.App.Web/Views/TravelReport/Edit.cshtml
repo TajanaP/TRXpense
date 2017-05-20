@@ -5,6 +5,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@using PagedList.Mvc;
+@using PagedList;
+
 <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="/">Home</a></li>
     <li class="breadcrumb-item"><a href="/TravelReport">Travel Reports</a></li>
@@ -14,76 +17,143 @@
 <h2>Edit Travel Report</h2>
 <hr />
 
-@using (Html.BeginForm("Edit", "TravelReport", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+@if (TempData["message"] != null)
 {
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary("", new { @class = "alert alert-danger" })
-
-    <div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.EmployeeId, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @*@Html.TextBoxFor(m => m.EmployeeId, new { @class = "form-control", disabled = "disabled", @Value = ViewBag.User })*@
-                @Html.EditorFor(m => m.EmployeeId, new { htmlAttributes = new { @class = "form-control", disabled = "disabled", @Value = ViewBag.User } })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.CountryAllowanceId, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(m => m.CountryAllowanceId, (List<SelectListItem>)ViewBag.Countries, new { @class = "form-control", @onchange = "FillAllowanceAmount()", id = "Country" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.City, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.EditorFor(m => m.City, new { htmlAttributes = new { @class = "form-control" } })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.DailyAllowance, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.EditorFor(m => m.DailyAllowance, new { htmlAttributes = new { @class = "form-control", disabled = "disabled", id = "allowanceAmount", @Value = ViewBag.Allowance } })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.VehicleType, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.EnumDropDownListFor(m => m.VehicleType, "-- Select Vehicle --", new { @class = "form-control", id = "VehicleType" })
-            </div>
-        </div>
-        <div class="form-group" id="hiddenRegistrationDropdown">
-            @Html.LabelFor(m => m.VehicleId, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(m => m.VehicleId, (List<SelectListItem>)ViewBag.Vehicles, new { @class = "form-control", id = "CompanyVehicle" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.ReasonForTravel, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.EditorFor(m => m.ReasonForTravel, new { htmlAttributes = new { @class = "form-control" } })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.Departure, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.EditorFor(m => m.Departure, new { htmlAttributes = new { @class = "form-control" } })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.Return, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.EditorFor(m => m.Return, new { htmlAttributes = new { @class = "form-control" } })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.ExpenseSum, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.EditorFor(m => m.ExpenseSum, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
-            </div>
-        </div>
-        <input type="submit" class="btn btn-primary col-md-offset-4" value="Save" />
+    <div class="successMessage">
+        <span class="glyphicon glyphicon-ok"></span>  @ViewBag.Message
     </div>
 }
+
+<ul class="nav nav-tabs">
+    <li role="presentation" class="active"><a href="#report" aria-controls="report" role="tab" data-toggle="tab">Report</a></li>
+    <li role="presentation"><a href="#expenses" aria-controls="expenses" role="tab" data-toggle="tab">Expenses</a></li>
+</ul>
+
+<div class="tab-content">
+
+    @*PANEL REPORT*@
+
+    <div role="tabpanel" class="tab-pane active" id="report">
+        <br />
+        @using (Html.BeginForm("Edit", "TravelReport", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary("", new { @class = "alert alert-danger" })
+
+            <div>
+                <div class="form-group">
+                        @Html.LabelFor(m => m.EmployeeId, new { @class = "col-md-2 control-label" })
+                        @Html.EditorFor(m => m.EmployeeId, new { htmlAttributes = new { @class = "col-md-4 form-control", disabled = "disabled", @Value = ViewBag.User } })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Departure, new { @class = "col-md-2 control-label" })
+                        @Html.EditorFor(m => m.Departure, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
+                        @Html.LabelFor(m => m.Return, new { @class = "col-md-2 control-label" })
+                        @Html.EditorFor(m => m.Return, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.ReasonForTravel, new { @class = "col-md-2 control-label" })
+                        @Html.EditorFor(m => m.ReasonForTravel, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
+                        @Html.LabelFor(m => m.City, new { @class = "col-md-2 control-label" })
+                        @Html.EditorFor(m => m.City, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CountryAllowanceId, new { @class = "col-md-2 control-label" })
+                        @Html.DropDownListFor(m => m.CountryAllowanceId, (List<SelectListItem>)ViewBag.Countries, new { @class = "col-md-4 form-control", @onchange = "FillAllowanceAmount()", id = "Country" })
+                        @Html.LabelFor(m => m.DailyAllowance, new { @class = "col-md-2 control-label" })
+                        @Html.EditorFor(m => m.DailyAllowance, new { htmlAttributes = new { @class = "col-md-4 form-control", disabled = "disabled", id = "allowanceAmount", @Value = ViewBag.Allowance } })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.VehicleType, new { @class = "col-md-2 control-label" })
+                        @Html.EnumDropDownListFor(m => m.VehicleType, "-- Select Vehicle --", new { @class = "col-md-4 form-control", id = "VehicleType" })
+                        <div id="hiddenRegistrationDropdown">
+                            @Html.LabelFor(m => m.VehicleId, new { @class = "col-md-2 control-label" })
+                            @Html.DropDownListFor(m => m.VehicleId, (List<SelectListItem>)ViewBag.Vehicles, new { @class = "col-md-4 form-control", id = "CompanyVehicle" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.ExpenseSum, new { @class = "col-md-2 control-label" })
+                        @Html.EditorFor(m => m.ExpenseSum, new { htmlAttributes = new { @class = "col-md-4 form-control", disabled = "disabled", @Value = ViewBag.ExpenseSum } })
+                    </div>
+                <hr />
+                <input type="submit" class="btn btn-primary col-md-offset-9" value="Save" />
+            </div>
+        }
+    </div>
+
+    @*PANEL EXPENSES*@
+
+    <div role="tabpanel" class="tab-pane" id="expenses">
+        <br />
+
+        <span class="create-button pull-right">@Html.ActionLink(" ", "CreateExpense", "TravelReport", new { id = Model.Id }, new { @class = "modal-link btn btn-success glyphicon glyphicon-plus" })</span>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                    <div class="panel panel-default panel-table">
+                        <div class="panel-body">
+                            <table id="travelOrders" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <td><h4>Date</h4></td>
+                                        <td><h4>Bill Number</h4></td>
+                                        <td><h4>Bill Amount</h4></td>
+                                        <td><h4>Category</h4></td>
+                                        <td><h4>Account</h4></td>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var expense in Model.Expenses)
+                                    {
+                                        <tr id="row_@expense.Id">
+                                            <td>@expense.Date</td>
+                                            <td>@expense.BillNumber</td>
+                                            <td>@expense.BillAmount</td>
+                                            <td>@expense.ExpenseCategory.Name</td>
+                                            <td>@expense.ExpenseCategory.Account</td>
+                                            <td>
+                                                <div class="controlButtons">
+                                                    @Html.ActionLink(" ", "EditExpense", "TravelReport", new { id = expense.Id }, new { @class = "modal-link btn btn-default glyphicon glyphicon-pencil" })
+                                                    <a href="#" class="btn btn-danger" onclick="ConfirmDelete(@expense.Id)"><i class="glyphicon glyphicon-trash"></i> </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="panel-footer"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="deleteConfirmModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <a href="#" class="close" data-dismiss="modal">&times;</a>
+                            <h4 class="modal-title">Delete</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to delete this expense? </p>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+                            <a href="#" class="btn btn-danger" onclick="DeleteExpense()">Confirm</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @*hidden field for storing current itemId*@
+            <input type="hidden" id="hiddenId" />
+        </div>
+    </div>
+
+</div>
+
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
@@ -91,6 +161,12 @@
     <script>
 
         // show dropdown with registrations if "Company car" is selected
+        $(function () {
+            if ($('#VehicleType').val() == '1') {
+                $('#hiddenRegistrationDropdown').show();
+            }
+        });
+
         $(function () {
             $('#VehicleType').change(function () {
                 var value = $(this).val();
@@ -116,6 +192,26 @@
                     $('#allowanceAmount').val(result);
                 }
             });
+        }
+
+        // EXPENSE
+
+        var ConfirmDelete = function (id) {
+            $("#hiddenId").val(id);
+            $("#deleteConfirmModal").modal('show');
+        }
+
+        var DeleteExpense = function () {
+            var exId = $("#hiddenId").val();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("DeleteExpense")',
+                data: { id: exId },
+                success: function (result) {
+                    $("#deleteConfirmModal").modal("hide");
+                    $("#row_" + exId).remove();
+                }
+            })
         }
 
     </script>

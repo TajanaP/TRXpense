@@ -48,6 +48,17 @@ textarea {
     margin-bottom: 20px;
 }
 
+.successMessage {
+    color: white;
+    font-size: 15px;
+    background-color: #93c54b;
+    border: 1px solid #93c54b;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
 .btn {
     font-size: 15px;
     font-weight: bold;

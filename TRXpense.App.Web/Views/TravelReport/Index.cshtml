@@ -11,6 +11,13 @@
 <h2>Manage Travel Reports</h2>
 <hr />
 
+@if (TempData["message"] != null)
+{
+    <div class="successMessage">
+        <span class="glyphicon glyphicon-ok"></span>   @ViewBag.Message
+    </div>
+}
+
 <form method="get" action="@Url.Action("Index", "TravelReport")">
     <div class="col-md-4 col-md-offset-1">
         <div id="custom-search-input">
@@ -105,41 +112,18 @@
 @section scripts
 {
     <script>
-
         var ConfirmDelete = function (id) {
-
             $("#hiddenId").val(id);
             $("#deleteConfirmModal").modal('show');
         }
 
         var DeleteTravelReport = function () {
-
             var trId = $("#hiddenId").val();
-
             $.ajax({
-
                 type: "POST",
-                url: '@Url.Action("Delete")', @* or "/Vehicle/Delete"*@
+                url: '@Url.Action("Delete")',
                 data: { id: trId },
                 success: function (result) {
-                    // if vehicle is assigned to employee
-                    //if (result != true) {
-                    //    bootbox.dialog({
-                    //        message: "This vehicle is assigned to an employee"
-                    //            + "</br>"
-                    //            + "You can only delete vehicles that are not assigned to employees.",
-                    //        title: "<span style='color:#e20a0a;'><strong> Warning </strong></span> "
-                    //            + '<span style="color:#e20a0a;" class="glyphicon glyphicon-warning-sign"></span>',
-                    //        buttons: {
-                    //            success: {
-                    //                label: "Close",
-                    //                className: "btn-default",
-                    //            },
-                    //        }
-                    //    });
-                    //    $("#deleteConfirmModal").modal("hide");
-                    //}
-                    // if vehicle is not assinged to employee
                     $("#deleteConfirmModal").modal("hide");
                     $("#row_" + trId).remove();
                 }

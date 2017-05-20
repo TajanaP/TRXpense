@@ -1,10 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace TRXpense.Bll.Model
 {
     public class TravelReport
     {
+        public TravelReport()
+        {
+            Expenses = new List<Expense>();
+        }
+
         public int Id { get; set; }
 
         [Required]
@@ -40,6 +46,8 @@ namespace TRXpense.Bll.Model
 
         [Required]
         public Status Status { get; set; } = Status.Opened;
+
+        public virtual ICollection<Expense> Expenses { get; set; }
     }
 
     public enum VehicleType

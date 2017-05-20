@@ -28,7 +28,8 @@ namespace TRXpense.App.Web.Mappers
                 Departure = model.Departure,
                 Return = model.Return,
                 ExpenseSum = model.ExpenseSum,
-                Status = model.Status
+                Status = model.Status,
+                Expenses = model.Expenses
             };
         }
 
@@ -68,7 +69,8 @@ namespace TRXpense.App.Web.Mappers
                 Departure = view.Departure,
                 Return = view.Return,
                 ExpenseSum = view.ExpenseSum,
-                Status = view.Status
+                Status = view.Status,
+                Expenses = view.Expenses
             };
         }
 

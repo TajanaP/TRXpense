@@ -15,6 +15,8 @@ namespace TRXpense.App.Web.Controllers
         private readonly ICountryAllowanceRepository _countryAllowanceRepository;
         private readonly IVehicleRepository _vehicleRepository;
         private readonly IApplicationUserRepository _applicationUserRepository;
+        private readonly IExpenseCategoryRepository _expenseCategoryRepository;
+        private readonly IExpenseRepository _expenseRepository;
 
         public TravelReportController()
         {
@@ -22,6 +24,8 @@ namespace TRXpense.App.Web.Controllers
             _countryAllowanceRepository = new CountryAllowanceRepository();
             _vehicleRepository = new VehicleRepository();
             _applicationUserRepository = new ApplicationUserRepository();
+            _expenseCategoryRepository = new ExpenseCategoryRepository();
+            _expenseRepository = new ExpenseRepository();
         }
 
         // GET: TravelReport
@@ -29,11 +33,10 @@ namespace TRXpense.App.Web.Controllers
         {
             var travelReports = _travelReportRepository.GetAllFromDatabaseEnumerable().ToList().MapToViews();
 
-            foreach (var report in travelReports)
-            {
-                report.Employee = _applicationUserRepository.FindById(report.EmployeeId).MapToView();
-                report.Country = _countryAllowanceRepository.FindById(report.CountryAllowanceId).MapToView();
-            }
+            GetFixedValuesForTravelReportIndexTable(travelReports);
+
+            if (TempData["message"] != null)
+                ViewBag.Message = TempData["message"].ToString();
 
             // paging
             int pageSize = 10;
@@ -88,6 +91,7 @@ namespace TRXpense.App.Web.Controllers
             {
                 _travelReportRepository.AddToDatabase(view.MapToModel());
                 _travelReportRepository.Save();
+                TempData["message"] = "Travel report successfully created!";
             }
 
             return RedirectToAction("Index");
@@ -100,14 +104,10 @@ namespace TRXpense.App.Web.Controllers
 
             var travelReport = _travelReportRepository.FindById(id).MapToView();
 
-            // auto-fill Employee
-            var userId = User.Identity.GetUserId();
-            var userInDb = _applicationUserRepository.FindById(userId).MapToView();
-            ViewBag.User = userInDb.FirstName + " " + userInDb.LastName;
+            GetFixedValuesForTravelReportEditFormAndExpenseIndexTable(travelReport);
 
-            // auto-fill Daily Allowance
-            var allowance = _countryAllowanceRepository.FindById(travelReport.CountryAllowanceId);
-            ViewBag.Allowance = allowance.Amount + " " + allowance.Currency;
+            if (TempData["message"] != null)
+                ViewBag.Message = TempData["message"].ToString();
 
             return View(travelReport);
         }
@@ -142,6 +142,67 @@ namespace TRXpense.App.Web.Controllers
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
+        // EXPENSE
+
+        public ActionResult CreateExpense(int id)
+        {
+            FillDropDownValuesExpenseCategory();
+
+            var expense = new ExpenseVM
+            {
+                TravelReportId = id
+            };
+
+            return PartialView("_CreateExpense", expense);
+        }
+
+        public ActionResult EditExpense(int id)
+        {
+            FillDropDownValuesExpenseCategory();
+            var expense = _expenseRepository.FindById(id).MapToView();
+
+            return PartialView("_EditExpense", expense);
+        }
+
+        [HttpPost]
+        public ActionResult SaveExpense(ExpenseVM view)
+        {
+            ModelState.Remove("Id");
+            if (ModelState.IsValid)
+            {
+                if (view.Id == 0)
+                {
+                    _expenseRepository.AddToDatabase(view.MapToModel());
+                    TempData["message"] = "Expense successfully created!";
+                }
+                else
+                    _expenseRepository.UpdateInDatabase(view.MapToModel(), view.Id);
+
+                _expenseRepository.Save();
+            }
+
+            return RedirectToAction("Edit/" + view.TravelReportId);
+        }
+
+        public JsonResult DeleteExpense(int id)
+        {
+            var expenseIdDb = _expenseRepository.FindById(id);
+            bool result = false;
+
+            if (expenseIdDb != null)
+            {
+                _expenseRepository.DeleteFromDatabase(expenseIdDb);
+                _expenseRepository.Save();
+                result = true;
+            }
+            else
+                return Json(new { });
+
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        // HELPER METHODS
+
         public JsonResult GetAllowanceForCountry(int countryId)
         {
             var allowance = _countryAllowanceRepository.FindById(countryId).MapToView();
@@ -174,6 +235,56 @@ namespace TRXpense.App.Web.Controllers
 
             selectItems.AddRange(_vehicleRepository.GetAllFromDatabaseEnumerable().ToList().MapToListVehicles());
             ViewBag.Vehicles = selectItems;
+        }
+
+        private void FillDropDownValuesExpenseCategory()
+        {
+            var selectItems = new List<SelectListItem>();
+
+            var listItem = new SelectListItem();
+            listItem.Text = "-- Select Category --";
+            listItem.Value = "";
+            selectItems.Add(listItem);
+
+            selectItems.AddRange(_expenseCategoryRepository.GetAllFromDatabaseEnumerable().ToList().MapToListExpenseCategories());
+            ViewBag.Categories = selectItems;
+        }
+
+        private void GetFixedValuesForTravelReportIndexTable(List<TravelReportVM> travelReports)
+        {
+            foreach (var report in travelReports)
+            {
+                report.Employee = _applicationUserRepository.FindById(report.EmployeeId).MapToView();
+                report.Country = _countryAllowanceRepository.FindById(report.CountryAllowanceId).MapToView();
+
+                var expenses = report.Expenses.Where(e => e.TravelReportId == report.Id).ToList().MapToViews();
+                foreach (var expense in expenses)
+                    report.ExpenseSum = report.ExpenseSum + expense.BillAmount;
+            }
+        }
+
+        private void GetFixedValuesForTravelReportEditFormAndExpenseIndexTable(TravelReportVM travelReport)
+        {
+            var expenses = travelReport.Expenses.Where(e => e.TravelReportId == travelReport.Id).ToList();
+
+            // get expenseCategory for ExpenseIndexTable
+            foreach (var expense in expenses)
+                expense.ExpenseCategory = _expenseCategoryRepository.FindById(expense.ExpenseCategoryId);
+
+            // auto-fill Employee
+            var userId = User.Identity.GetUserId();
+            var userInDb = _applicationUserRepository.FindById(userId).MapToView();
+            ViewBag.User = userInDb.FirstName + " " + userInDb.LastName;
+
+            // auto-fill DailyAllowance
+            var allowance = _countryAllowanceRepository.FindById(travelReport.CountryAllowanceId).MapToView();
+            ViewBag.Allowance = allowance.Amount + " " + allowance.Currency;
+
+            // auto-fill TotalExpense sum
+            foreach (var expense in expenses)
+                travelReport.ExpenseSum = travelReport.ExpenseSum + expense.BillAmount;
+
+            ViewBag.ExpenseSum = travelReport.ExpenseSum;
         }
     }
 }

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TRXpense.Bll.Model
 {
@@ -23,5 +19,8 @@ namespace TRXpense.Bll.Model
 
         public int ExpenseCategoryId { get; set; } // foreign key
         public ExpenseCategory ExpenseCategory { get; set; }
+
+        public int TravelReportId { get; set; } // foreign key
+        public virtual TravelReport TravelReport { get; set; }
     }
 }

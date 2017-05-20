@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using TRXpense.Bll.Model;
 
@@ -54,5 +55,7 @@ namespace TRXpense.App.Web.ViewModels
 
         [Required]
         public Status Status { get; set; }
+
+        public virtual ICollection<Expense> Expenses { get; set; }
     }
 }
