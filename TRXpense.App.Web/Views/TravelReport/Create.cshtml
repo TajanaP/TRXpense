@@ -21,35 +21,43 @@
 
     <div>
         <div class="form-group">
-                @Html.LabelFor(m => m.EmployeeId, new { @class = "col-md-2 control-label" })
-                @Html.EditorFor(m => m.EmployeeId, new { htmlAttributes = new { @class = "col-md-4 form-control", disabled = "disabled", @Value = ViewBag.User } })
+            @Html.LabelFor(m => m.EmployeeId, new { @class = "col-md-2 control-label" })
+            @Html.EditorFor(m => m.EmployeeId, new { htmlAttributes = new { @class = "col-md-4 form-control", disabled = "disabled", @Value = ViewBag.User } })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Departure, new { @class = "col-md-2 control-label" })
+            @Html.EditorFor(m => m.Departure, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
+            @Html.LabelFor(m => m.Return, new { @class = "col-md-2 control-label" })
+            @Html.EditorFor(m => m.Return, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.ReasonForTravel, new { @class = "col-md-2 control-label" })
+            @Html.EditorFor(m => m.ReasonForTravel, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
+            @Html.LabelFor(m => m.City, new { @class = "col-md-2 control-label" })
+            @Html.EditorFor(m => m.City, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.CountryAllowanceId, new { @class = "col-md-2 control-label" })
+            @Html.DropDownListFor(m => m.CountryAllowanceId, (List<SelectListItem>)ViewBag.Countries, new { @class = "col-md-4 form-control", @onchange = "FillAllowanceAmount()", id = "Country" })
+            @Html.LabelFor(m => m.DailyAllowance, new { @class = "col-md-2 control-label" })
+            @Html.EditorFor(m => m.DailyAllowance, new { htmlAttributes = new { @class = "col-md-4 form-control", disabled = "disabled", id = "allowanceAmount" } })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.VehicleType, new { @class = "col-md-2 control-label" })
+            @Html.EnumDropDownListFor(m => m.VehicleType, "-- Select Vehicle --", new { @class = "col-md-4 form-control", id = "VehicleType" })
+            <div id="hiddenRegistrationDropdown">
+                @Html.LabelFor(m => m.VehicleId, new { @class = "col-md-2 control-label" })
+                @Html.DropDownListFor(m => m.VehicleId, (List<SelectListItem>)ViewBag.Vehicles, new { @class = "col-md-4 form-control", id = "VehicleId" })
             </div>
+        </div>
+        <div id="hiddenMileageForm">
             <div class="form-group">
-                @Html.LabelFor(m => m.Departure, new { @class = "col-md-2 control-label" })
-                @Html.EditorFor(m => m.Departure, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
-                @Html.LabelFor(m => m.Return, new { @class = "col-md-2 control-label" })
-                @Html.EditorFor(m => m.Return, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
+                @Html.LabelFor(m => m.StartMileage, new { @class = "col-md-2 control-label" })
+                @Html.EditorFor(m => m.StartMileage, new { htmlAttributes = new { @class = "col-md-4 form-control", id = "StartMileage" } })
+                @Html.LabelFor(m => m.EndMileage, new { @class = "col-md-2 control-label" })
+                @Html.EditorFor(m => m.EndMileage, new { htmlAttributes = new { @class = "col-md-4 form-control", id = "EndMileage" } })
             </div>
-            <div class="form-group">
-                @Html.LabelFor(m => m.ReasonForTravel, new { @class = "col-md-2 control-label" })
-                @Html.EditorFor(m => m.ReasonForTravel, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
-                @Html.LabelFor(m => m.City, new { @class = "col-md-2 control-label" })
-                @Html.EditorFor(m => m.City, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
-            </div>
-            <div class="form-group">
-                @Html.LabelFor(m => m.CountryAllowanceId, new { @class = "col-md-2 control-label" })
-                @Html.DropDownListFor(m => m.CountryAllowanceId, (List<SelectListItem>)ViewBag.Countries, new { @class = "col-md-4 form-control", @onchange = "FillAllowanceAmount()", id = "Country" })
-                @Html.LabelFor(m => m.DailyAllowance, new { @class = "col-md-2 control-label" })
-                @Html.EditorFor(m => m.DailyAllowance, new { htmlAttributes = new { @class = "col-md-4 form-control", disabled = "disabled", id = "allowanceAmount" } })
-            </div>
-            <div class="form-group">
-                @Html.LabelFor(m => m.VehicleType, new { @class = "col-md-2 control-label" })
-                @Html.EnumDropDownListFor(m => m.VehicleType, "-- Select Vehicle --", new { @class = "col-md-4 form-control", id = "VehicleType" })
-                <div id="hiddenRegistrationDropdown">
-                    @Html.LabelFor(m => m.VehicleId, new { @class = "col-md-2 control-label" })
-                    @Html.DropDownListFor(m => m.VehicleId, (List<SelectListItem>)ViewBag.Vehicles, new { @class = "col-md-4 form-control", id = "CompanyVehicle" })
-                </div>
-            </div>
+        </div>
         <hr />
         <input type="submit" class="btn btn-primary col-md-offset-9" value="Save" />
     </div>
@@ -60,17 +68,37 @@
 
     <script>
 
-        // show dropdown with registrations if "Company car" is selected
+        // show mileage fields and dropdown with registrations if "Company car" is selected
+        // show mileage fields if "Private Car" is selected
         $(function () {
             $('#VehicleType').change(function () {
                 var value = $(this).val();
-                if (value == '1') {
+                if (value == '1') {                                                             // COMPANY CAR
                     $('#hiddenRegistrationDropdown').show();
-                    //$('#CompanyVehicle').removeAttr('disabled');
-                } else {
+                    $('#VehicleId').prop("required", true);
+                    $.validator.messages.required = 'Company Car Registration is required.';
+                    $('#hiddenMileageForm').show();
+                    $('#StartMileage').prop("required", false);
+                    $('#EndMileage').prop("required", false);
+                    $('#StartMileage').val(null);
+                    $('#EndMileage').val(null);
+                } else if (value == '0') {                                                      // PRIVATE CAR
+                    $('#hiddenMileageForm').show();
+                    $('#StartMileage').prop("required", true);
+                    $('#EndMileage').prop("required", true);
+                    $.validator.messages.required = 'Mileage field is required.';
                     $('#hiddenRegistrationDropdown').hide();
-                    //$('#CompanyVehicle').attr('disabled', 'disabled');
-                    $('#CompanyVehicle').val(0);
+                    $('#VehicleId').prop("required", false);
+                    $('#VehicleId').val(null);
+                } else {                                                                        // OTHER
+                    $('#hiddenRegistrationDropdown').hide();
+                    $('#VehicleId').prop("required", false);
+                    $('#VehicleId').val(null);
+                    $('#hiddenMileageForm').hide();
+                    $('#StartMileage').prop("required", false);
+                    $('#EndMileage').prop("required", false);
+                    $('#StartMileage').val(null);
+                    $('#EndMileage').val(null);
                 }
             });
         });

@@ -33,10 +33,18 @@ namespace TRXpense.App.Web.Controllers
         {
             var travelReports = _travelReportRepository.GetAllFromDatabaseEnumerable().ToList().MapToViews();
 
-            GetFixedValuesForTravelReportIndexTable(travelReports);
+            foreach (var report in travelReports) // get fixed values for TravelReport Index Table
+            {
+                report.Employee = _applicationUserRepository.FindById(report.EmployeeId).MapToView();
+                report.Country = _countryAllowanceRepository.FindById(report.CountryAllowanceId).MapToView();
+            }
 
-            if (TempData["message"] != null)
-                ViewBag.Message = TempData["message"].ToString();
+            if (TempData["travelReportCreatedMessage"] != null)
+                ViewBag.SuccessMessage = TempData["travelReportCreatedMessage"].ToString();
+            if (TempData["travelReportDeletedMessage"] != null)
+                ViewBag.SuccessMessage = TempData["travelReportDeletedMessage"].ToString();
+            if (TempData["travelReportErrorMessage"] != null)
+                ViewBag.FailureMessage = TempData["travelReportErrorMessage"].ToString();
 
             // paging
             int pageSize = 10;
@@ -91,7 +99,19 @@ namespace TRXpense.App.Web.Controllers
             {
                 _travelReportRepository.AddToDatabase(view.MapToModel());
                 _travelReportRepository.Save();
-                TempData["message"] = "Travel report successfully created!";
+                TempData["travelReportCreatedMessage"] = "Travel report successfully created!";
+
+                // add Id to view after new report is generated
+                var latestId = _travelReportRepository.GetAllFromDatabaseEnumerable().Max(t => t.Id);
+                view.Id = latestId;
+
+                CalculateAllowanceExpenses(view);
+                CalculateMileageExpenses(view);
+                CalculateExpenseSum(view);
+            }
+            else
+            {
+                TempData["travelReportErrorMessage"] = "Something went wrong, please try again!";
             }
 
             return RedirectToAction("Index");
@@ -99,15 +119,18 @@ namespace TRXpense.App.Web.Controllers
 
         public ActionResult Edit(int id)
         {
-            FillDropDownValuesForCountry();
-            FillDropDownValuesForVehicleRegistration();
-
             var travelReport = _travelReportRepository.FindById(id).MapToView();
 
+            FillDropDownValuesForCountry();
+            FillDropDownValuesForVehicleRegistration();
             GetFixedValuesForTravelReportEditFormAndExpenseIndexTable(travelReport);
 
-            if (TempData["message"] != null)
-                ViewBag.Message = TempData["message"].ToString();
+            if (TempData["expenseCreatedOrUpdatedMessage"] != null)
+                ViewBag.Message = TempData["expenseCreatedOrUpdatedMessage"].ToString();
+            if (TempData["expenseDeletedMessage"] != null)
+                ViewBag.Message = TempData["expenseDeletedMessage"].ToString();
+            if (TempData["travelReportUpdatedMessage"] != null)
+                ViewBag.Message = TempData["travelReportUpdatedMessage"].ToString();
 
             return View(travelReport);
         }
@@ -115,14 +138,20 @@ namespace TRXpense.App.Web.Controllers
         [HttpPost]
         public ActionResult Edit(TravelReportVM view)
         {
+            view.EmployeeId = User.Identity.GetUserId();
+
+            CalculateAllowanceExpenses(view);
+            CalculateMileageExpenses(view);
+            CalculateExpenseSum(view);
+
             if (ModelState.IsValid)
             {
-                view.EmployeeId = User.Identity.GetUserId();
                 _travelReportRepository.UpdateInDatabase(view.MapToModel(), view.Id);
                 _travelReportRepository.Save();
+                TempData["travelReportUpdatedMessage"] = "Travel report successfully updated!";
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Edit/" + view.Id);
         }
 
         public JsonResult Delete(int id)
@@ -134,6 +163,7 @@ namespace TRXpense.App.Web.Controllers
             {
                 _travelReportRepository.DeleteFromDatabase(travelReportInDB);
                 _travelReportRepository.Save();
+                TempData["travelReportDeletedMessage"] = "Travel report successfully deleted!";
                 result = true;
             }
             else
@@ -161,7 +191,21 @@ namespace TRXpense.App.Web.Controllers
             FillDropDownValuesExpenseCategory();
             var expense = _expenseRepository.FindById(id).MapToView();
 
-            return PartialView("_EditExpense", expense);
+            // Allowance and Private Car Transportation can NOT be edited
+            if (expense.ExpenseCategoryId == 1)
+            {
+                TempData["allowanceExpenseCanNotBeEditedMessage"] = "Allowance expense is calculated from departure/return dates, you can not edit it here!";
+                ViewBag.WarningMessage = TempData["allowanceExpenseCanNotBeEditedMessage"].ToString();
+                return PartialView("_InfoMessage");
+            }
+            else if (expense.ExpenseCategoryId == 10)
+            {
+                TempData["privateCarExpenseCanNotBeEditedMessage"] = "Private Car expense is calculated from start/end mileage, you can not edit it here!";
+                ViewBag.WarningMessage = TempData["privateCarExpenseCanNotBeEditedMessage"].ToString();
+                return PartialView("_InfoMessage");
+            }
+            else
+                return PartialView("_EditExpense", expense);
         }
 
         [HttpPost]
@@ -173,13 +217,20 @@ namespace TRXpense.App.Web.Controllers
                 if (view.Id == 0)
                 {
                     _expenseRepository.AddToDatabase(view.MapToModel());
-                    TempData["message"] = "Expense successfully created!";
+                    _expenseRepository.Save();
+                    TempData["expenseCreatedOrUpdatedMessage"] = "Expense successfully created!";
                 }
                 else
+                {
                     _expenseRepository.UpdateInDatabase(view.MapToModel(), view.Id);
-
-                _expenseRepository.Save();
+                    _expenseRepository.Save();
+                    TempData["expenseCreatedOrUpdatedMessage"] = "Expense successfully updated!";
+                }
             }
+
+            var travelReport = _travelReportRepository.FindById(view.TravelReportId).MapToView();
+            travelReport.ExpenseSum = 0;
+            CalculateExpenseSum(travelReport);
 
             return RedirectToAction("Edit/" + view.TravelReportId);
         }
@@ -191,9 +242,19 @@ namespace TRXpense.App.Web.Controllers
 
             if (expenseIdDb != null)
             {
-                _expenseRepository.DeleteFromDatabase(expenseIdDb);
-                _expenseRepository.Save();
-                result = true;
+                var expense = _expenseRepository.FindById(id).MapToView();
+                var travelReport = _travelReportRepository.GetAllFromDatabaseEnumerable().Where(t => t.Id == expense.TravelReportId).SingleOrDefault().MapToView();
+
+                if (expense.ExpenseCategoryId != 1 && expense.ExpenseCategoryId != 10) // Allowance and Private Car Transportation can NOT be deleted
+                {
+                    _expenseRepository.DeleteFromDatabase(expenseIdDb);
+                    _expenseRepository.Save();
+                    TempData["expenseDeletedMessage"] = "Expense successfully deleted!";
+                    result = true;
+
+                    travelReport.ExpenseSum = 0;
+                    CalculateExpenseSum(travelReport);
+                }
             }
             else
                 return Json(new { });
@@ -247,20 +308,12 @@ namespace TRXpense.App.Web.Controllers
             selectItems.Add(listItem);
 
             selectItems.AddRange(_expenseCategoryRepository.GetAllFromDatabaseEnumerable().ToList().MapToListExpenseCategories());
+
+            // remove category that is calculated by program itself
+            selectItems.Remove(selectItems.Where(i => i.Value == "1").Single());    // allowance
+            selectItems.Remove(selectItems.Where(i => i.Value == "10").Single());   // private car transportation
+
             ViewBag.Categories = selectItems;
-        }
-
-        private void GetFixedValuesForTravelReportIndexTable(List<TravelReportVM> travelReports)
-        {
-            foreach (var report in travelReports)
-            {
-                report.Employee = _applicationUserRepository.FindById(report.EmployeeId).MapToView();
-                report.Country = _countryAllowanceRepository.FindById(report.CountryAllowanceId).MapToView();
-
-                var expenses = report.Expenses.Where(e => e.TravelReportId == report.Id).ToList().MapToViews();
-                foreach (var expense in expenses)
-                    report.ExpenseSum = report.ExpenseSum + expense.BillAmount;
-            }
         }
 
         private void GetFixedValuesForTravelReportEditFormAndExpenseIndexTable(TravelReportVM travelReport)
@@ -279,12 +332,113 @@ namespace TRXpense.App.Web.Controllers
             // auto-fill DailyAllowance
             var allowance = _countryAllowanceRepository.FindById(travelReport.CountryAllowanceId).MapToView();
             ViewBag.Allowance = allowance.Amount + " " + allowance.Currency;
+        }
 
-            // auto-fill TotalExpense sum
+        private void CalculateExpenseSum(TravelReportVM travelReport)
+        {
+            var expenses = _expenseRepository.GetAllFromDatabaseEnumerable().Where(t => t.TravelReportId == travelReport.Id).ToList().MapToViews();
             foreach (var expense in expenses)
                 travelReport.ExpenseSum = travelReport.ExpenseSum + expense.BillAmount;
 
-            ViewBag.ExpenseSum = travelReport.ExpenseSum;
+            _travelReportRepository.UpdateInDatabase(travelReport.MapToModel(), travelReport.Id);
+            _travelReportRepository.Save();
+        }
+
+        private void CalculateAllowanceExpenses(TravelReportVM view)
+        {
+            var countryAllowance = _countryAllowanceRepository.FindById(view.CountryAllowanceId).MapToView();
+            var hours = (view.Return - view.Departure).TotalHours;
+            decimal allowanceSum = 0;
+            view.NumberOfHours = hours;
+
+            if (hours < 8)
+            {
+                allowanceSum = 0;
+            }
+            else if (hours >= 8 && hours < 12)
+            {
+                allowanceSum = (countryAllowance.Amount / 2);
+                view.NumberOfAllowances = 0.5;
+            }
+            else
+            {
+                for (double i = hours; i >= 12; i -= 12)
+                {
+                    allowanceSum += countryAllowance.Amount / 2;
+                    view.NumberOfAllowances += 0.5;
+                }
+            }
+
+            // add/update allowance in Expenses
+
+            var allowanceExpense = new ExpenseVM // create expense
+            {
+                TravelReportId = view.Id,
+                Date = view.Return,
+                ExpenseCategoryId = 1,
+                BillNumber = "-",
+                BillAmount = allowanceSum
+            };
+
+            var travelReportExpenses = _expenseRepository.GetAllFromDatabaseEnumerable().Where(e => e.TravelReportId == view.Id).ToList().MapToViews();
+            bool exists = false;
+
+            foreach (var expense in travelReportExpenses) // check if it already exists, if NO -> add, if YES -> update
+            {
+                if (expense.ExpenseCategoryId == 1)
+                {
+                    exists = true;
+                    allowanceExpense.Id = expense.Id;
+                }
+            }
+
+            if (exists)
+                _expenseRepository.UpdateInDatabase(allowanceExpense.MapToModel(), allowanceExpense.Id);
+            else
+                _expenseRepository.AddToDatabase(allowanceExpense.MapToModel());
+
+            _expenseRepository.Save();
+        }
+
+        private void CalculateMileageExpenses(TravelReportVM view)
+        {
+            decimal mileageSum = 0;
+
+            if (view.StartMileage != null && view.EndMileage != null)
+                mileageSum = view.EndMileage.Value - view.StartMileage.Value;
+
+            // add/update private car expense in Expenses
+
+            if (view.VehicleType.Value == 0)
+            {
+                var mileageExpense = new ExpenseVM
+                {
+                    TravelReportId = view.Id,
+                    Date = view.Return,
+                    ExpenseCategoryId = 10,
+                    BillNumber = "-",
+                    BillAmount = mileageSum * 2
+                };
+
+                var travelReportExpenses = _expenseRepository.GetAllFromDatabaseEnumerable().Where(e => e.TravelReportId == view.Id).ToList().MapToViews();
+                bool exists = false;
+
+                foreach (var expense in travelReportExpenses)
+                {
+                    if (expense.ExpenseCategoryId == 10)
+                    {
+                        exists = true;
+                        mileageExpense.Id = expense.Id;
+                    }
+                }
+
+                if (exists)
+                    _expenseRepository.UpdateInDatabase(mileageExpense.MapToModel(), mileageExpense.Id);
+                else
+                    _expenseRepository.AddToDatabase(mileageExpense.MapToModel());
+
+                _expenseRepository.Save();
+            }
         }
     }
 }

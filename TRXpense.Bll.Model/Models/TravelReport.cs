@@ -28,18 +28,28 @@ namespace TRXpense.Bll.Model
         public string City { get; set; }
 
         [Required]
+        public DateTime Departure { get; set; }
+
+        [Required]
+        public DateTime Return { get; set; }
+
+        [Required]
+        public double NumberOfHours { get; set; }
+
+        [Required]
+        public double NumberOfAllowances { get; set; }
+
+        [Required]
         public VehicleType? VehicleType { get; set; }
 
         public int? VehicleId { get; set; } // foreign key, nullable, hidden, otvara se samo ako je odabran VehicleType - CompanyCar
         public Vehicle CompanyVehicle { get; set; }
 
+        public decimal? StartMileage { get; set; }
+
+        public decimal? EndMileage { get; set; }
+
         public string ReasonForTravel { get; set; }
-
-        [Required]
-        public DateTime Departure { get; set; }
-
-        [Required]
-        public DateTime Return { get; set; }
 
         [Required]
         public decimal ExpenseSum { get; set; } // ovo polje se samo popunjava na temelju svih unešenih expensa
@@ -59,6 +69,7 @@ namespace TRXpense.Bll.Model
         [Display(Name = "Front Seat Passanger")]
         FrontSeatPassenger,
         Plane,
+        Bus,
         Train,
         Ferry
     }

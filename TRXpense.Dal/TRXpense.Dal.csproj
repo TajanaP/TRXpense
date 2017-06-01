@@ -134,6 +134,14 @@
     <Compile Include="Migrations\201705111818285_AddedExpensesToTravelReport.Designer.cs">
       <DependentUpon>201705111818285_AddedExpensesToTravelReport.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201705211001573_AddedNumberOfHoursAndAllowancesToTravelReport.cs" />
+    <Compile Include="Migrations\201705211001573_AddedNumberOfHoursAndAllowancesToTravelReport.Designer.cs">
+      <DependentUpon>201705211001573_AddedNumberOfHoursAndAllowancesToTravelReport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705271954570_AddedMileageToTravelReport.cs" />
+    <Compile Include="Migrations\201705271954570_AddedMileageToTravelReport.Designer.cs">
+      <DependentUpon>201705271954570_AddedMileageToTravelReport.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\CostCenter\CostCenterRepository.cs" />
@@ -220,6 +228,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201705111818285_AddedExpensesToTravelReport.resx">
       <DependentUpon>201705111818285_AddedExpensesToTravelReport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705211001573_AddedNumberOfHoursAndAllowancesToTravelReport.resx">
+      <DependentUpon>201705211001573_AddedNumberOfHoursAndAllowancesToTravelReport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705271954570_AddedMileageToTravelReport.resx">
+      <DependentUpon>201705271954570_AddedMileageToTravelReport.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

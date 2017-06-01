@@ -483,10 +483,10 @@
     <Content Include="Views\TravelReport\_Details.cshtml" />
     <Content Include="Views\TravelReport\_EditExpense.cshtml" />
     <Content Include="Views\TravelReport\_CreateExpense.cshtml" />
+    <Content Include="Views\TravelReport\_InfoMessage.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Expense\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

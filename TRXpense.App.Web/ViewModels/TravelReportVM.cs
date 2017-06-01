@@ -33,6 +33,22 @@ namespace TRXpense.App.Web.ViewModels
         public decimal DailyAllowance { get; set; } // polje koje se povlači automatski prema odabranoj državi
 
         [Required]
+        public DateTime Departure { get; set; }
+
+        [Required]
+        public DateTime Return { get; set; }
+
+        [Required]
+        [Display(Name = "Hours")]
+        [DisplayFormat(DataFormatString = "{0:0.00}", ApplyFormatInEditMode = true)]
+        public double NumberOfHours { get; set; }
+
+        [Required]
+        [Display(Name = "Allowances")]
+        public double NumberOfAllowances { get; set; }
+
+        [Required]
+        [Display(Name = "Vehicle")]
         public VehicleType? VehicleType { get; set; }
 
         [Display(Name = "Company Car")]
@@ -40,14 +56,14 @@ namespace TRXpense.App.Web.ViewModels
         //public VehicleVM CompanyVehicle { get; set; }
         //public IEnumerable<VehicleVM> Vehicles { get; set; }
 
+        [Display(Name = "Start Mileage")]
+        public decimal? StartMileage { get; set; }
+
+        [Display(Name = "End Mileage")]
+        public decimal? EndMileage { get; set; }
+
         [Display(Name = "Reason for Travel")]
         public string ReasonForTravel { get; set; }
-
-        [Required]
-        public DateTime Departure { get; set; }
-
-        [Required]
-        public DateTime Return { get; set; }
 
         [Required]
         [Display(Name = "Expense Total")]

@@ -370,5 +370,9 @@ a:focus {
 -------------------------------- */
 
 #hiddenRegistrationDropdown {
-    display:none;
+    display: none;
+}
+
+#hiddenMileageForm {
+    display: none;
 }

@@ -11,10 +11,16 @@
 <h2>Manage Travel Reports</h2>
 <hr />
 
-@if (TempData["message"] != null)
+@if (TempData["travelReportCreatedMessage"] != null || TempData["travelReportDeletedMessage"] != null)
 {
     <div class="successMessage">
-        <span class="glyphicon glyphicon-ok"></span>   @ViewBag.Message
+        <span class="glyphicon glyphicon-ok"></span>   @ViewBag.SuccessMessage
+    </div>
+}
+@if (TempData["travelReportErrorMessage"] != null)
+{
+    <div class="alertMessage">
+        <span class="glyphicon glyphicon-warning-sign"></span>   @ViewBag.FailureMessage
     </div>
 }
 
@@ -126,6 +132,7 @@
                 success: function (result) {
                     $("#deleteConfirmModal").modal("hide");
                     $("#row_" + trId).remove();
+                    window.location.reload();
                 }
             })
         }
