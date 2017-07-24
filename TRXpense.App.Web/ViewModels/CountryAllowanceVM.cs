@@ -17,7 +17,12 @@ namespace TRXpense.App.Web.ViewModels
 
         [Required]
         [StringLength(3)]
-        [Display(Name = "Currency*")]
-        public string Currency { get; set; }
+        [Display(Name = "Allowance Currency*")]
+        public string AllowanceCurrency { get; set; }
+
+        [Required]
+        [StringLength(3)]
+        [Display(Name = "Official Currency*")]
+        public string OfficialCurrency { get; set; }
     }
 }

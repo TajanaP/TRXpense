@@ -98,7 +98,7 @@
     <div role="tabpanel" class="tab-pane" id="expenses">
         <br />
 
-        <span class="create-button pull-right">@Html.ActionLink(" ", "CreateExpense", "TravelReport", new { id = Model.Id }, new { @class = "modal-link btn btn-success glyphicon glyphicon-plus" })</span>
+        <span class="create-button pull-right">@Html.ActionLink(" ", "CreateExpense", "TravelReport", new { travelReportId = Model.Id }, new { @class = "modal-link btn btn-success glyphicon glyphicon-plus" })</span>
 
         <div class="container">
             <div class="row">
@@ -111,8 +111,9 @@
                                         <td><h4>Date</h4></td>
                                         <td><h4>Bill Number</h4></td>
                                         <td><h4>Bill Amount</h4></td>
+                                        <td><h4>Currency</h4></td>
                                         <td><h4>Category</h4></td>
-                                        <td><h4>Account</h4></td>
+                                        @*<td><h4>Account</h4></td>*@
                                         <td></td>
                                     </tr>
                                 </thead>
@@ -123,8 +124,9 @@
                                             <td>@expense.Date</td>
                                             <td>@expense.BillNumber</td>
                                             <td>@expense.BillAmount</td>
+                                            <td>@expense.OfficialCurrency</td>
                                             <td>@expense.ExpenseCategory.Name</td>
-                                            <td>@expense.ExpenseCategory.Account</td>
+                                            @*<td>@expense.ExpenseCategory.Account</td>*@
                                             <td>
                                                 <div class="controlButtons">
                                                     @Html.ActionLink(" ", "EditExpense", "TravelReport", new { id = expense.Id }, new { @class = "modal-link btn btn-default glyphicon glyphicon-pencil" })

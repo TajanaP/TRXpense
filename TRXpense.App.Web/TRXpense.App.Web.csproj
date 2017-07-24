@@ -194,6 +194,7 @@
     <Compile Include="Mappers\ExpenseMapper.cs" />
     <Compile Include="Mappers\TravelReportMapper.cs" />
     <Compile Include="Mappers\VehicleMapper.cs" />
+    <Compile Include="Services\ExchangeRate.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs" />
     <Compile Include="ViewModels\CostCenterVM.cs" />
     <Compile Include="ViewModels\CountryAllowanceVM.cs" />

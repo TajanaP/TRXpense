@@ -15,6 +15,10 @@ namespace TRXpense.Bll.Model
 
         [Required]
         [StringLength(3)]
-        public string Currency { get; set; }
+        public string AllowanceCurrency { get; set; }
+
+        [Required]
+        [StringLength(3)]
+        public string OfficialCurrency { get; set; }
     }
 }

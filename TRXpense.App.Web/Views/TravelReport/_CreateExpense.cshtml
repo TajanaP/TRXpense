@@ -29,6 +29,11 @@
                     @Html.ValidationMessageFor(m => m.BillAmount)
                 </div>
                 <div class="form-group">
+                    @Html.LabelFor(m => m.OfficialCurrency)
+                    @Html.DropDownListFor(m => m.OfficialCurrency, (List<SelectListItem>)ViewBag.OfficialCurrencies, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.OfficialCurrency)
+                </div>
+                <div class="form-group">
                     @Html.LabelFor(m => m.ExpenseCategoryId)
                     @Html.DropDownListFor(m => m.ExpenseCategoryId, (List<SelectListItem>)ViewBag.Categories, new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.ExpenseCategoryId)

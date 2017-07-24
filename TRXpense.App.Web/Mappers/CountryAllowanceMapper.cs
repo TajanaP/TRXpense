@@ -16,7 +16,8 @@ namespace TRXpense.App.Web.Mappers
                 Id = model.Id,
                 Country = model.Country,
                 Amount = model.Amount,
-                Currency = model.Currency
+                AllowanceCurrency = model.AllowanceCurrency,
+                OfficialCurrency = model.OfficialCurrency
             };
         }
 
@@ -45,7 +46,8 @@ namespace TRXpense.App.Web.Mappers
                 Id = view.Id,
                 Country = view.Country,
                 Amount = view.Amount,
-                Currency = view.Currency
+                AllowanceCurrency = view.AllowanceCurrency,
+                OfficialCurrency = view.OfficialCurrency
             };
         }
     }

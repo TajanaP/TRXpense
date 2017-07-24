@@ -38,7 +38,8 @@
                             <tr>
                                 <td><h4>Country</h4></td>
                                 <td><h4>Amount</h4></td>
-                                <td><h4>Currency</h4></td>
+                                <td><h4>Allowance Currency</h4></td>
+                                <td><h4>Official Currency</h4></td>
                                 <td></td>
                             </tr>
                         </thead>
@@ -48,7 +49,8 @@
                                 <tr id="row_@allowance.Id">
                                     <td>@allowance.Country</td>
                                     <td>@allowance.Amount</td>
-                                    <td>@allowance.Currency</td>
+                                    <td>@allowance.AllowanceCurrency</td>
+                                    <td>@allowance.OfficialCurrency</td>
                                     <td>
                                         <div class="controlButtons">
                                             @Html.ActionLink(" ", "Edit", "CountryAllowance", new { id = allowance.Id }, new { @class = "modal-link btn btn-default glyphicon glyphicon-pencil" })

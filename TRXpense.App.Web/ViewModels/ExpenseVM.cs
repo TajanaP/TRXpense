@@ -20,6 +20,10 @@ namespace TRXpense.App.Web.ViewModels
         [Display(Name = "Bill Amount*")]
         public decimal BillAmount { get; set; }
 
+        [Required]
+        [Display(Name = "Currency*")]
+        public string OfficialCurrency { get; set; }
+
         [Display(Name = "Expense Category*")]
         public int ExpenseCategoryId { get; set; } // foreign key
         public ExpenseCategoryVM ExpenseCategory { get; set; }

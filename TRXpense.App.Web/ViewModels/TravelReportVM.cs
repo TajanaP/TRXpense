@@ -72,6 +72,6 @@ namespace TRXpense.App.Web.ViewModels
         [Required]
         public Status Status { get; set; }
 
-        public virtual ICollection<Expense> Expenses { get; set; }
+        public List<ExpenseVM> Expenses { get; set; }
     }
 }

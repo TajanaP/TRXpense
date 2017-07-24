@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNet.Identity;
 using PagedList;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using TRXpense.App.Web.Mappers;
+using TRXpense.App.Web.Services;
 using TRXpense.App.Web.ViewModels;
 using TRXpense.Dal.Repositories;
 
@@ -174,13 +176,14 @@ namespace TRXpense.App.Web.Controllers
 
         // EXPENSE
 
-        public ActionResult CreateExpense(int id)
+        public ActionResult CreateExpense(int travelReportId)
         {
-            FillDropDownValuesExpenseCategory();
+            FillDropDownValuesForOfficialCurrency();
+            FillDropDownValuesForExpenseCategory();
 
             var expense = new ExpenseVM
             {
-                TravelReportId = id
+                TravelReportId = travelReportId
             };
 
             return PartialView("_CreateExpense", expense);
@@ -188,8 +191,9 @@ namespace TRXpense.App.Web.Controllers
 
         public ActionResult EditExpense(int id)
         {
-            FillDropDownValuesExpenseCategory();
             var expense = _expenseRepository.FindById(id).MapToView();
+            FillDropDownValuesForOfficialCurrency();
+            FillDropDownValuesForExpenseCategory();
 
             // Allowance and Private Car Transportation can NOT be edited
             if (expense.ExpenseCategoryId == 1)
@@ -228,8 +232,21 @@ namespace TRXpense.App.Web.Controllers
                 }
             }
 
+            // calculate ExchangeRate for ExpenseSum if neccessary
             var travelReport = _travelReportRepository.FindById(view.TravelReportId).MapToView();
+            var country = _countryAllowanceRepository
+                .GetAllFromDatabaseEnumerable()
+                .Where(c => c.Id == travelReport.CountryAllowanceId)
+                .SingleOrDefault()
+                .MapToView();
+
             travelReport.ExpenseSum = 0;
+            if (country.OfficialCurrency != "HRK")
+            {
+                view.OfficialCurrency = _countryAllowanceRepository.FindById(int.Parse(view.OfficialCurrency)).OfficialCurrency;
+                if (view.OfficialCurrency != "HRK")
+                    view.BillAmount = CalculateExchangeRate(country.OfficialCurrency, view.Date, view.BillAmount);
+            }
             CalculateExpenseSum(travelReport);
 
             return RedirectToAction("Edit/" + view.TravelReportId);
@@ -267,7 +284,7 @@ namespace TRXpense.App.Web.Controllers
         public JsonResult GetAllowanceForCountry(int countryId)
         {
             var allowance = _countryAllowanceRepository.FindById(countryId).MapToView();
-            var result = allowance.Amount + " " + allowance.Currency;
+            var result = allowance.Amount + " " + allowance.AllowanceCurrency;
 
             return Json(result, JsonRequestBehavior.AllowGet);
         }
@@ -281,7 +298,7 @@ namespace TRXpense.App.Web.Controllers
             listItem.Value = "";
             selectItems.Add(listItem);
 
-            selectItems.AddRange(_countryAllowanceRepository.GetAllFromDatabaseEnumerable().ToList().MapToListCountries());
+            selectItems.AddRange(_countryAllowanceRepository.GetAllFromDatabaseEnumerable().ToList().MapToListCountries().OrderBy(o => o.Text));
             ViewBag.Countries = selectItems;
         }
 
@@ -298,7 +315,41 @@ namespace TRXpense.App.Web.Controllers
             ViewBag.Vehicles = selectItems;
         }
 
-        private void FillDropDownValuesExpenseCategory()
+        private void FillDropDownValuesForOfficialCurrency(/*int id*/)
+        {
+            var selectItems = new List<SelectListItem>();
+            var listItem = new SelectListItem();
+            listItem.Text = "-- Select Currency --";
+            listItem.Value = "";
+            selectItems.Add(listItem);
+
+            selectItems.AddRange(_countryAllowanceRepository.GetAllFromDatabaseEnumerable().ToList().MapToListCurrencies().OrderBy(o => o.Text));
+            var selectItemsDistinct = selectItems.GroupBy(g => g.Text).Select(g => g.First());
+
+            // OPTION 2. --> getting only HRK and currency of a choosen country in dropdown
+
+            //var travelReport = _travelReportRepository.FindById(id).MapToView();
+            //var countryAllowances = _countryAllowanceRepository.GetAllFromDatabaseEnumerable();
+            //var country = countryAllowances.Where(c => c.Id == travelReport.CountryAllowanceId).SingleOrDefault().MapToView();
+            //var hrk = countryAllowances.Where(c => c.OfficialCurrency == "HRK").SingleOrDefault().MapToView();
+
+            //var officialCurrency = new SelectListItem();
+            //officialCurrency.Text = country.OfficialCurrency;
+            //officialCurrency.Value = country.Id.ToString();
+            //selectItems.Add(officialCurrency);
+
+            //if (country.OfficialCurrency != "HRK") // HRK must be available for every expense
+            //{
+            //    var croatianCurrency = new SelectListItem();
+            //    croatianCurrency.Text = hrk.OfficialCurrency;
+            //    croatianCurrency.Value = hrk.Id.ToString();
+            //    selectItems.Add(croatianCurrency);
+            //}
+
+            ViewBag.OfficialCurrency = selectItemsDistinct.ToList();
+        }
+
+        private void FillDropDownValuesForExpenseCategory()
         {
             var selectItems = new List<SelectListItem>();
 
@@ -320,9 +371,16 @@ namespace TRXpense.App.Web.Controllers
         {
             var expenses = travelReport.Expenses.Where(e => e.TravelReportId == travelReport.Id).ToList();
 
-            // get expenseCategory for ExpenseIndexTable
+            // get expenseCategory for ExpenseIndexTable and allways show Allowance currency and PrivateCarTransportation currency as "HRK"
             foreach (var expense in expenses)
-                expense.ExpenseCategory = _expenseCategoryRepository.FindById(expense.ExpenseCategoryId);
+            {
+                expense.ExpenseCategory = _expenseCategoryRepository.FindById(expense.ExpenseCategoryId).MapToView();
+
+                if (expense.ExpenseCategoryId == 1 || expense.ExpenseCategoryId == 10) // allowance or private car transportation
+                    expense.OfficialCurrency = "HRK";
+                else
+                    expense.OfficialCurrency = _countryAllowanceRepository.FindById(int.Parse(expense.OfficialCurrency)).OfficialCurrency; // not a foreign key
+            }
 
             // auto-fill Employee
             var userId = User.Identity.GetUserId();
@@ -331,12 +389,12 @@ namespace TRXpense.App.Web.Controllers
 
             // auto-fill DailyAllowance
             var allowance = _countryAllowanceRepository.FindById(travelReport.CountryAllowanceId).MapToView();
-            ViewBag.Allowance = allowance.Amount + " " + allowance.Currency;
+            ViewBag.Allowance = allowance.Amount + " " + allowance.AllowanceCurrency;
         }
 
         private void CalculateExpenseSum(TravelReportVM travelReport)
         {
-            var expenses = _expenseRepository.GetAllFromDatabaseEnumerable().Where(t => t.TravelReportId == travelReport.Id).ToList().MapToViews();
+            var expenses = _expenseRepository.GetAllFromDatabaseEnumerable().Where(t => t.TravelReportId == travelReport.Id).ToList();
             foreach (var expense in expenses)
                 travelReport.ExpenseSum = travelReport.ExpenseSum + expense.BillAmount;
 
@@ -369,6 +427,9 @@ namespace TRXpense.App.Web.Controllers
                 }
             }
 
+            if (countryAllowance.AllowanceCurrency != "HRK")
+                allowanceSum = CalculateExchangeRate(countryAllowance.AllowanceCurrency, view.Return, allowanceSum);
+
             // add/update allowance in Expenses
 
             var allowanceExpense = new ExpenseVM // create expense
@@ -377,13 +438,14 @@ namespace TRXpense.App.Web.Controllers
                 Date = view.Return,
                 ExpenseCategoryId = 1,
                 BillNumber = "-",
-                BillAmount = allowanceSum
+                BillAmount = allowanceSum,
+                OfficialCurrency = "HRK"
             };
 
-            var travelReportExpenses = _expenseRepository.GetAllFromDatabaseEnumerable().Where(e => e.TravelReportId == view.Id).ToList().MapToViews();
+            var expenses = _expenseRepository.GetAllFromDatabaseEnumerable().Where(e => e.TravelReportId == view.Id).ToList();
             bool exists = false;
 
-            foreach (var expense in travelReportExpenses) // check if it already exists, if NO -> add, if YES -> update
+            foreach (var expense in expenses) // check if it already exists, if NO -> add, if YES -> update
             {
                 if (expense.ExpenseCategoryId == 1)
                 {
@@ -403,6 +465,7 @@ namespace TRXpense.App.Web.Controllers
         private void CalculateMileageExpenses(TravelReportVM view)
         {
             decimal mileageSum = 0;
+            var countryAllowance = _countryAllowanceRepository.FindById(view.CountryAllowanceId).MapToView();
 
             if (view.StartMileage != null && view.EndMileage != null)
                 mileageSum = view.EndMileage.Value - view.StartMileage.Value;
@@ -417,13 +480,14 @@ namespace TRXpense.App.Web.Controllers
                     Date = view.Return,
                     ExpenseCategoryId = 10,
                     BillNumber = "-",
-                    BillAmount = mileageSum * 2
+                    BillAmount = mileageSum * 2,
+                    OfficialCurrency = "HRK"
                 };
 
-                var travelReportExpenses = _expenseRepository.GetAllFromDatabaseEnumerable().Where(e => e.TravelReportId == view.Id).ToList().MapToViews();
+                var expenses = _expenseRepository.GetAllFromDatabaseEnumerable().Where(e => e.TravelReportId == view.Id).ToList();
                 bool exists = false;
 
-                foreach (var expense in travelReportExpenses)
+                foreach (var expense in expenses)
                 {
                     if (expense.ExpenseCategoryId == 10)
                     {
@@ -439,6 +503,37 @@ namespace TRXpense.App.Web.Controllers
 
                 _expenseRepository.Save();
             }
+        }
+
+        private decimal CalculateExchangeRate(string currency, DateTime date, decimal amount)
+        {
+            decimal finalAmount = 0;
+
+            switch (currency)
+            {
+                case "BAM":
+                    finalAmount = amount * decimal.Parse(3.75.ToString());
+                    break;
+                case "BGN":
+                    finalAmount = amount * decimal.Parse(3.75.ToString());
+                    break;
+                case "RON":
+                    finalAmount = amount * decimal.Parse(1.60.ToString());
+                    break;
+                case "RSD":
+                    finalAmount = amount * decimal.Parse(0.06.ToString());
+                    break;
+                case "TRY":
+                    finalAmount = amount * decimal.Parse(1.80.ToString());
+                    break;
+                default:
+                    var exchangeRateList = new ExchangeRate(date.ToString("yyyy-MM-dd"));
+                    ExchangeRate.item exchangeRate = exchangeRateList.getExchangeRate(currency);
+                    string excRate = exchangeRate.srednji_tecaj.Replace(",", ".");
+                    finalAmount = amount * (decimal.Parse(exchangeRate.jedinica) * decimal.Parse(excRate));
+                    break;
+            }
+            return finalAmount;
         }
     }
 }

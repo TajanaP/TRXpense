@@ -17,6 +17,10 @@ namespace TRXpense.Bll.Model
         [Required]
         public decimal BillAmount { get; set; }
 
+        [Required]
+        [StringLength(3)]
+        public string Currency { get; set; }
+
         public int ExpenseCategoryId { get; set; } // foreign key
         public ExpenseCategory ExpenseCategory { get; set; }
 

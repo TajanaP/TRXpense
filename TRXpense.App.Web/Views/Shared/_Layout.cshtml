@@ -26,19 +26,19 @@
                     @if (User.IsInRole("Admin"))
                     {
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Manage Employee Profiles <span class="caret"></span></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Manage Data <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="/Role">Role</a></li>
-                                <li><a href="/CostCenter">Cost Center</a></li>
-                                <li><a href="/Vehicle">Vehicle</a></li>
-                                <li><a href="/CountryAllowance">Allowance</a></li>
-                                <li><a href="/ExpenseCategory">Expense Categorie</a></li>
+                                <li><a href="/Role">Roles</a></li>
+                                <li><a href="/CostCenter">Cost Centers</a></li>
+                                <li><a href="/Vehicle">Vehicles</a></li>
+                                <li><a href="/CountryAllowance">Allowances</a></li>
+                                <li><a href="/ExpenseCategory">Expense Categories</a></li>
                                 <li role="separator" class="divider"></li>
-                                <li><a href="/Account">Employee</a></li>
+                                <li><a href="/Account">Employees</a></li>
                             </ul>
                         </li>
-                        <li>@Html.ActionLink("My Profile", "ViewProfile", "Account")</li>
                         <li>@Html.ActionLink("Travel Reports", "Index", "TravelReport")</li>
+                        <li>@Html.ActionLink("My Profile", "ViewProfile", "Account")</li>
                     }
                     else if (User.Identity.IsAuthenticated)
                     {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using TRXpense.App.Web.ViewModels;
 using TRXpense.Bll.Model;
@@ -11,6 +12,8 @@ namespace TRXpense.App.Web.Mappers
         {
             if (model == null)
                 return null;
+
+            IQueryable<Expense> expenses = model.Expenses.AsQueryable();
 
             return new TravelReportVM
             {
@@ -33,7 +36,7 @@ namespace TRXpense.App.Web.Mappers
                 ReasonForTravel = model.ReasonForTravel,
                 ExpenseSum = model.ExpenseSum,
                 Status = model.Status,
-                Expenses = model.Expenses
+                Expenses = expenses.MapToViews()
             };
         }
 
@@ -57,6 +60,16 @@ namespace TRXpense.App.Web.Mappers
             if (view == null)
                 return null;
 
+            ICollection<Expense> expenses = new List<Expense>();
+
+            if (view.Expenses != null)
+            {
+                foreach (var item in view.Expenses)
+                {
+                    expenses.Add(item.MapToModel());
+                }
+            }
+
             return new TravelReport
             {
                 Id = view.Id,
@@ -78,7 +91,7 @@ namespace TRXpense.App.Web.Mappers
                 ReasonForTravel = view.ReasonForTravel,
                 ExpenseSum = view.ExpenseSum,
                 Status = view.Status,
-                Expenses = view.Expenses
+                Expenses = expenses
             };
         }
 

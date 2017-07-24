@@ -19,12 +19,16 @@ namespace TRXpense.App.Web.Controllers
         // GET: CountryAllowance
         public ActionResult Index(int? page, string query = null)
         {
-            var allowances = _countryAllowanceRepository.GetAllFromDatabaseEnumerable().ToList().MapToViews();
+            var allowances = _countryAllowanceRepository
+                .GetAllFromDatabaseEnumerable()
+                .ToList()
+                .MapToViews()
+                .OrderBy(o => o.Country);
 
             // paging
-            int pageSize = 5;
+            int pageSize = 6;
             var pageNumber = page ?? 1; // if no page was specified in the querystring, default to the first page (1)
-            var onePageOfAllowances = allowances.ToPagedList(pageNumber, pageSize); // will only contain 5 products max because of the pageSize
+            var onePageOfAllowances = allowances.ToPagedList(pageNumber, pageSize); // will only contain 6 products max because of the pageSize
 
             // searching
             if (!string.IsNullOrEmpty(query))
@@ -32,7 +36,7 @@ namespace TRXpense.App.Web.Controllers
                 decimal d;
                 var allowanceSearched = _countryAllowanceRepository.GetAllFromDatabaseEnumerable()
                     .Where(a => a.Country.ToLower().Contains(query.ToLower())
-                        || a.Currency.ToLower().Contains(query.ToLower())
+                        || a.AllowanceCurrency.ToLower().Contains(query.ToLower())
                         || a.Amount.Equals(decimal.TryParse(query, out d) ? d : (decimal?)null))
                     .ToList()
                     .MapToViews();

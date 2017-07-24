@@ -24,9 +24,14 @@
                     @Html.ValidationMessageFor(m => m.Amount)
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(m => m.Currency)
-                    @Html.TextBoxFor(m => m.Currency, new { @class = "form-control" })
-                    @Html.ValidationMessageFor(m => m.Currency)
+                    @Html.LabelFor(m => m.AllowanceCurrency)
+                    @Html.TextBoxFor(m => m.AllowanceCurrency, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.AllowanceCurrency)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.OfficialCurrency)
+                    @Html.TextBoxFor(m => m.OfficialCurrency, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.OfficialCurrency)
                 </div>
                 <div>
                     @Html.HiddenFor(m => m.Id)
