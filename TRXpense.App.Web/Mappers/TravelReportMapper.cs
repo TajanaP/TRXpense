@@ -25,6 +25,7 @@ namespace TRXpense.App.Web.Mappers
                 City = model.City,
                 Departure = model.Departure,
                 Return = model.Return,
+                NumberOfMeals = model.NumberOfMeals,
                 NumberOfHours = model.NumberOfHours,
                 NumberOfAllowances = model.NumberOfAllowances,
                 VehicleType = model.VehicleType,
@@ -34,6 +35,8 @@ namespace TRXpense.App.Web.Mappers
                 //Vehicle = model.Vehicle,
                 //CompanyVehicle = model.CompanyVehicle.MapToView(),
                 ReasonForTravel = model.ReasonForTravel,
+                Deposit = model.Deposit,
+                DepositAmount = model.DepositAmount,
                 ExpenseSum = model.ExpenseSum,
                 Status = model.Status,
                 Expenses = expenses.MapToViews()
@@ -80,6 +83,7 @@ namespace TRXpense.App.Web.Mappers
                 City = view.City,
                 Departure = view.Departure,
                 Return = view.Return,
+                NumberOfMeals = view.NumberOfMeals,
                 NumberOfHours = view.NumberOfHours,
                 NumberOfAllowances = view.NumberOfAllowances,
                 VehicleType = view.VehicleType,
@@ -89,6 +93,8 @@ namespace TRXpense.App.Web.Mappers
                 //Vehicle = view.Vehicle,
                 //CompanyVehicle = view.CompanyVehicle.MapToModel(),
                 ReasonForTravel = view.ReasonForTravel,
+                Deposit = view.Deposit,
+                DepositAmount = view.DepositAmount,
                 ExpenseSum = view.ExpenseSum,
                 Status = view.Status,
                 Expenses = expenses

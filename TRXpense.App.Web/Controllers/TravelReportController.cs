@@ -41,12 +41,7 @@ namespace TRXpense.App.Web.Controllers
                 report.Country = _countryAllowanceRepository.FindById(report.CountryAllowanceId).MapToView();
             }
 
-            if (TempData["travelReportCreatedMessage"] != null)
-                ViewBag.SuccessMessage = TempData["travelReportCreatedMessage"].ToString();
-            if (TempData["travelReportDeletedMessage"] != null)
-                ViewBag.SuccessMessage = TempData["travelReportDeletedMessage"].ToString();
-            if (TempData["travelReportErrorMessage"] != null)
-                ViewBag.FailureMessage = TempData["travelReportErrorMessage"].ToString();
+            CheckTempDataMessages();
 
             // paging
             int pageSize = 10;
@@ -126,13 +121,7 @@ namespace TRXpense.App.Web.Controllers
             FillDropDownValuesForCountry();
             FillDropDownValuesForVehicleRegistration();
             GetFixedValuesForTravelReportEditFormAndExpenseIndexTable(travelReport);
-
-            if (TempData["expenseCreatedOrUpdatedMessage"] != null)
-                ViewBag.Message = TempData["expenseCreatedOrUpdatedMessage"].ToString();
-            if (TempData["expenseDeletedMessage"] != null)
-                ViewBag.Message = TempData["expenseDeletedMessage"].ToString();
-            if (TempData["travelReportUpdatedMessage"] != null)
-                ViewBag.Message = TempData["travelReportUpdatedMessage"].ToString();
+            CheckTempDataMessages();
 
             return View(travelReport);
         }
@@ -143,8 +132,12 @@ namespace TRXpense.App.Web.Controllers
             view.EmployeeId = User.Identity.GetUserId();
 
             CalculateAllowanceExpenses(view);
+            if (TempData["wrongNumberOfMeals"] != null)
+                return RedirectToAction("Edit/" + view.Id);
+
             CalculateMileageExpenses(view);
             CalculateExpenseSum(view);
+            CheckTempDataMessages();
 
             if (ModelState.IsValid)
             {
@@ -427,11 +420,122 @@ namespace TRXpense.App.Web.Controllers
                 }
             }
 
+            // exclude Meal percentage from allowanceSum
+            decimal reduction = 0;
+            int counter = 0;
+            if (view.CountryAllowanceId == 1)
+            {
+                switch (view.NumberOfMeals.ToString())  // CROATIA (30%)
+                {
+                    case "None":
+                        break;
+                    case "One":
+                        reduction = countryAllowance.Amount * decimal.Parse(0.3.ToString());
+                        counter = 1;
+                        break;
+                    case "Two":
+                        reduction = countryAllowance.Amount * decimal.Parse(0.6.ToString());
+                        counter = 2;
+                        break;
+                    case "Three":
+                        reduction = countryAllowance.Amount * decimal.Parse(0.9.ToString());
+                        counter = 3;
+                        break;
+                    case "Four":
+                        reduction = countryAllowance.Amount * decimal.Parse(1.2.ToString());
+                        counter = 4;
+                        break;
+                    case "Five":
+                        reduction = countryAllowance.Amount * decimal.Parse(1.5.ToString());
+                        counter = 5;
+                        break;
+                    case "Six":
+                        reduction = countryAllowance.Amount * decimal.Parse(1.8.ToString());
+                        counter = 6;
+                        break;
+                    case "Seven":
+                        reduction = countryAllowance.Amount * decimal.Parse(2.1.ToString());
+                        counter = 7;
+                        break;
+                    case "Eight":
+                        reduction = countryAllowance.Amount * decimal.Parse(2.4.ToString());
+                        counter = 8;
+                        break;
+                    case "Nine":
+                        reduction = countryAllowance.Amount * decimal.Parse(2.7.ToString());
+                        counter = 9;
+                        break;
+                    case "Ten":
+                        reduction = countryAllowance.Amount * decimal.Parse(3.0.ToString());
+                        counter = 10;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                switch (view.NumberOfMeals.ToString())  // OTHERS (40%)
+                {
+                    case "None":
+                        break;
+                    case "One":
+                        reduction = countryAllowance.Amount * decimal.Parse(0.4.ToString());
+                        counter = 1;
+                        break;
+                    case "Two":
+                        reduction = countryAllowance.Amount * decimal.Parse(0.8.ToString());
+                        counter = 2;
+                        break;
+                    case "Three":
+                        reduction = countryAllowance.Amount * decimal.Parse(1.2.ToString());
+                        counter = 3;
+                        break;
+                    case "Four":
+                        reduction = countryAllowance.Amount * decimal.Parse(1.6.ToString());
+                        counter = 4;
+                        break;
+                    case "Five":
+                        reduction = countryAllowance.Amount * decimal.Parse(2.0.ToString());
+                        counter = 5;
+                        break;
+                    case "Six":
+                        reduction = countryAllowance.Amount * decimal.Parse(2.4.ToString());
+                        counter = 6;
+                        break;
+                    case "Seven":
+                        reduction = countryAllowance.Amount * decimal.Parse(2.8.ToString());
+                        counter = 7;
+                        break;
+                    case "Eight":
+                        reduction = countryAllowance.Amount * decimal.Parse(3.2.ToString());
+                        counter = 8;
+                        break;
+                    case "Nine":
+                        reduction = countryAllowance.Amount * decimal.Parse(3.6.ToString());
+                        counter = 9;
+                        break;
+                    case "Ten":
+                        reduction = countryAllowance.Amount * decimal.Parse(4.0.ToString());
+                        counter = 10;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            allowanceSum -= reduction;
+            if (counter > (view.NumberOfAllowances * 2))
+            {
+                TempData["wrongNumberOfMeals"] = "Please select correct number of meals!";
+                allowanceSum = 0;
+                return;
+            }
+
+            // calculate ExchangeRate if not HRK
             if (countryAllowance.AllowanceCurrency != "HRK")
                 allowanceSum = CalculateExchangeRate(countryAllowance.AllowanceCurrency, view.Return, allowanceSum);
 
             // add/update allowance in Expenses
-
             var allowanceExpense = new ExpenseVM // create expense
             {
                 TravelReportId = view.Id,
@@ -534,6 +638,27 @@ namespace TRXpense.App.Web.Controllers
                     break;
             }
             return finalAmount;
+        }
+
+        private void CheckTempDataMessages()
+        {
+            // edit.cshtml
+            if (TempData["expenseCreatedOrUpdatedMessage"] != null)
+                ViewBag.Message = TempData["expenseCreatedOrUpdatedMessage"].ToString();
+            if (TempData["expenseDeletedMessage"] != null)
+                ViewBag.Message = TempData["expenseDeletedMessage"].ToString();
+            if (TempData["travelReportUpdatedMessage"] != null)
+                ViewBag.Message = TempData["travelReportUpdatedMessage"].ToString();
+            if (TempData["wrongNumberOfMeals"] != null)
+                ViewBag.AlertMessage = TempData["wrongNumberOfMeals"].ToString();
+
+            // index.cshtml
+            if (TempData["travelReportCreatedMessage"] != null)
+                ViewBag.SuccessMessage = TempData["travelReportCreatedMessage"].ToString();
+            if (TempData["travelReportDeletedMessage"] != null)
+                ViewBag.SuccessMessage = TempData["travelReportDeletedMessage"].ToString();
+            if (TempData["travelReportErrorMessage"] != null)
+                ViewBag.FailureMessage = TempData["travelReportErrorMessage"].ToString();
         }
     }
 }

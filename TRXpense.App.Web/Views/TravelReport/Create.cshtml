@@ -31,16 +31,16 @@
             @Html.EditorFor(m => m.Return, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
         </div>
         <div class="form-group">
-            @Html.LabelFor(m => m.ReasonForTravel, new { @class = "col-md-2 control-label" })
-            @Html.EditorFor(m => m.ReasonForTravel, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
-            @Html.LabelFor(m => m.City, new { @class = "col-md-2 control-label" })
-            @Html.EditorFor(m => m.City, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
-        </div>
-        <div class="form-group">
             @Html.LabelFor(m => m.CountryAllowanceId, new { @class = "col-md-2 control-label" })
             @Html.DropDownListFor(m => m.CountryAllowanceId, (List<SelectListItem>)ViewBag.Countries, new { @class = "col-md-4 form-control", @onchange = "FillAllowanceAmount()", id = "Country" })
             @Html.LabelFor(m => m.DailyAllowance, new { @class = "col-md-2 control-label" })
             @Html.EditorFor(m => m.DailyAllowance, new { htmlAttributes = new { @class = "col-md-4 form-control", disabled = "disabled", id = "allowanceAmount" } })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.City, new { @class = "col-md-2 control-label" })
+            @Html.EditorFor(m => m.City, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
+            @Html.LabelFor(m => m.ReasonForTravel, new { @class = "col-md-2 control-label" })
+            @Html.EditorFor(m => m.ReasonForTravel, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
         </div>
         <div class="form-group">
             @Html.LabelFor(m => m.VehicleType, new { @class = "col-md-2 control-label" })
@@ -56,6 +56,14 @@
                 @Html.EditorFor(m => m.StartMileage, new { htmlAttributes = new { @class = "col-md-4 form-control", id = "StartMileage" } })
                 @Html.LabelFor(m => m.EndMileage, new { @class = "col-md-2 control-label" })
                 @Html.EditorFor(m => m.EndMileage, new { htmlAttributes = new { @class = "col-md-4 form-control", id = "EndMileage" } })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Deposit, new { @class = "col-md-2 control-label" })
+            @Html.CheckBoxFor(m => m.Deposit, new { @class = "col-md-4 form-control", id = "Deposit" })
+            <div id="hiddenDepositField">
+                @Html.LabelFor(m => m.DepositAmount, new { @class = "col-md-2 control-label" })
+                @Html.EditorFor(m => m.DepositAmount, new { htmlAttributes = new { @class = "col-md-4 form-control", id = "DepositField" } })
             </div>
         </div>
         <hr />
@@ -101,6 +109,20 @@
                     $('#EndMileage').val(null);
                 }
             });
+        });
+
+        // show deposit field if deposit checkbox is checked
+        $('#Deposit').change(function () {
+            if ($(this).is(":checked")) {
+                $("#hiddenDepositField").show();
+                $('#DepositField').prop("required", true);
+                $.validator.messages.required = 'Deposit Amount is required.';
+            }
+            else {
+                $("#hiddenDepositField").hide();
+                $('#DepositField').prop("required", false);
+                $('#DepositField').val(null);
+            }
         });
 
         // fill allowance (amount & currency) based on selected country

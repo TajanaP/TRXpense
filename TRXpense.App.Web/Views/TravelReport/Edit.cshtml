@@ -20,7 +20,12 @@
         <span class="glyphicon glyphicon-ok"></span>  @ViewBag.Message
     </div>
 }
-
+@if (TempData["wrongNumberOfMeals"] != null)
+{
+    <div class="alertMessage">
+        <span class="glyphicon glyphicon-warning-sign"></span>   @ViewBag.AlertMessage
+    </div>
+}
 
 <ul class="nav nav-tabs">
     <li role="presentation" class="active"><a href="#report" aria-controls="report" role="tab" data-toggle="tab">Report</a></li>
@@ -48,6 +53,10 @@
                     @Html.EditorFor(m => m.Departure, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
                     @Html.LabelFor(m => m.Return, new { @class = "col-md-2 control-label" })
                     @Html.EditorFor(m => m.Return, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.NumberOfMeals, new { @class = "col-md-2 control-label" })
+                    @Html.EnumDropDownListFor(m => m.NumberOfMeals, new { @class = "col-md-4 form-control" })
                 </div>
                 <div class="form-group">
                     @Html.LabelFor(m => m.NumberOfHours, new { @class = "col-md-2 control-label" })
@@ -83,6 +92,14 @@
                         @Html.EditorFor(m => m.EndMileage, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
                     </div>
                 </div>
+                @*<div class="form-group">
+                    @Html.LabelFor(m => m.Deposit, new { @class = "col-md-2 control-label" })
+                    @Html.CheckBoxFor(m => m.Deposit, new { @class = "col-md-4 form-control" })
+                    <div id="hiddenDepositField">
+                        @Html.LabelFor(m => m.DepositAmount, new { @class = "col-md-2 control-label" })
+                        @Html.EditorFor(m => m.DepositAmount, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
+                    </div>
+                </div>*@
                 <div class="form-group">
                     @Html.LabelFor(m => m.ExpenseSum, new { @class = "col-md-2 control-label" })
                     @Html.EditorFor(m => m.ExpenseSum, new { htmlAttributes = new { @class = "col-md-4 form-control", disabled = "disabled" } })
@@ -218,6 +235,20 @@
                 }
             });
         });
+
+        // show deposit field if deposit checkbox is checked
+        //$('#Deposit').change(function () {
+        //    if ($(this).is(":checked")) {
+        //        $("#hiddenDepositField").show();
+        //        $('#DepositField').prop("required", true);
+        //        $.validator.messages.required = 'Deposit Amount is required.';
+        //    }
+        //    else {
+        //        $("#hiddenDepositField").hide();
+        //        $('#DepositField').prop("required", false);
+        //        $('#VehicleId').val(null);
+        //    }
+        //});
 
         // fill allowance (amount & currency) based on selected country
         function FillAllowanceAmount() {

@@ -34,6 +34,9 @@ namespace TRXpense.Bll.Model
         public DateTime Return { get; set; }
 
         [Required]
+        public NumberOfMeals NumberOfMeals { get; set; }
+
+        [Required]
         public double NumberOfHours { get; set; }
 
         [Required]
@@ -51,6 +54,11 @@ namespace TRXpense.Bll.Model
 
         public string ReasonForTravel { get; set; }
 
+        public bool Deposit { get; set; }
+
+        [Display(Name = "Deposit Amount")]
+        public decimal? DepositAmount { get; set; }
+
         [Required]
         public decimal ExpenseSum { get; set; } // ovo polje se samo popunjava na temelju svih unešenih expensa
 
@@ -66,7 +74,7 @@ namespace TRXpense.Bll.Model
         PrivateCar,
         [Display(Name = "Company Car")]
         CompanyCar,
-        [Display(Name = "Front Seat Passanger")]
+        [Display(Name = "Front Seat Passenger")]
         FrontSeatPassenger,
         Plane,
         Bus,
@@ -78,5 +86,31 @@ namespace TRXpense.Bll.Model
     {
         Opened,
         Closed
+    }
+
+    public enum NumberOfMeals
+    {
+        [Display(Name = "0")]
+        None,
+        [Display(Name = "1")]
+        One,
+        [Display(Name = "2")]
+        Two,
+        [Display(Name = "3")]
+        Three,
+        [Display(Name = "4")]
+        Four,
+        [Display(Name = "5")]
+        Five,
+        [Display(Name = "6")]
+        Six,
+        [Display(Name = "7")]
+        Seven,
+        [Display(Name = "8")]
+        Eight,
+        [Display(Name = "9")]
+        Nine,
+        [Display(Name = "10")]
+        Ten
     }
 }

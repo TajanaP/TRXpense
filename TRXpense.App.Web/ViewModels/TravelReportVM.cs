@@ -39,6 +39,10 @@ namespace TRXpense.App.Web.ViewModels
         public DateTime Return { get; set; }
 
         [Required]
+        [Display(Name = "Number of Meals")]
+        public NumberOfMeals NumberOfMeals { get; set; }
+
+        [Required]
         [Display(Name = "Hours")]
         [DisplayFormat(DataFormatString = "{0:0.00}", ApplyFormatInEditMode = true)]
         public double NumberOfHours { get; set; }
@@ -64,6 +68,11 @@ namespace TRXpense.App.Web.ViewModels
 
         [Display(Name = "Reason for Travel")]
         public string ReasonForTravel { get; set; }
+
+        public bool Deposit { get; set; }
+
+        [Display(Name = "Deposit Amount")]
+        public decimal? DepositAmount { get; set; }
 
         [Required]
         [Display(Name = "Expense Total")]
