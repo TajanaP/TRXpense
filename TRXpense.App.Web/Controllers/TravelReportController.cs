@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.Identity;
 using PagedList;
+using Rotativa;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace TRXpense.App.Web.Controllers
         private readonly IApplicationUserRepository _applicationUserRepository;
         private readonly IExpenseCategoryRepository _expenseCategoryRepository;
         private readonly IExpenseRepository _expenseRepository;
+        private readonly ICostCenterRepository _costCenterRepository;
 
         public TravelReportController()
         {
@@ -28,6 +30,7 @@ namespace TRXpense.App.Web.Controllers
             _applicationUserRepository = new ApplicationUserRepository();
             _expenseCategoryRepository = new ExpenseCategoryRepository();
             _expenseRepository = new ExpenseRepository();
+            _costCenterRepository = new CostCenterRepository();
         }
 
         // GET: TravelReport
@@ -64,13 +67,6 @@ namespace TRXpense.App.Web.Controllers
 
             ViewBag.onePageOfTravelReports = onePageOfTravelReports;
             return View(onePageOfTravelReports);
-        }
-
-        public ActionResult Details(int id)
-        {
-            var travelReport = _travelReportRepository.FindById(id).MapToView();
-
-            return PartialView("_Details", travelReport);
         }
 
         public ActionResult Create()
@@ -659,6 +655,45 @@ namespace TRXpense.App.Web.Controllers
                 ViewBag.SuccessMessage = TempData["travelReportDeletedMessage"].ToString();
             if (TempData["travelReportErrorMessage"] != null)
                 ViewBag.FailureMessage = TempData["travelReportErrorMessage"].ToString();
+        }
+
+        [AllowAnonymous]
+        public ActionResult Print(int id)
+        {
+            var travelReport = _travelReportRepository.FindById(id).MapToView();
+
+            // Employee info
+            var employee = _applicationUserRepository.FindById(travelReport.EmployeeId).MapToView();
+            var costCenter = _costCenterRepository.FindById(employee.CostCenterId).MapToView();
+            var superior = _applicationUserRepository.FindById(employee.SuperiorId).MapToView();
+            employee.CostCenter = costCenter;
+            employee.Superior = superior.MapToModel();
+            travelReport.Employee = employee;
+
+            // TravelReport info
+            var country = _countryAllowanceRepository.FindById(travelReport.CountryAllowanceId).MapToView();
+            travelReport.Country = country;
+            if (travelReport.DepositAmount == null)
+                travelReport.DepositAmount = 0;
+            var vehicle = _vehicleRepository.GetAllFromDatabaseEnumerable().Where(v => v.Id == travelReport.VehicleId).SingleOrDefault().MapToView();
+            if (vehicle == null)
+                travelReport.CompanyVehicle = new VehicleVM();
+            else
+                travelReport.CompanyVehicle = vehicle;
+
+            // Expense info
+            var expenses = travelReport.Expenses.Where(e => e.TravelReportId == travelReport.Id).ToList();
+            foreach (var expense in expenses)
+            {
+                expense.ExpenseCategory = _expenseCategoryRepository.FindById(expense.ExpenseCategoryId).MapToView();
+
+                if (expense.ExpenseCategoryId == 1 || expense.ExpenseCategoryId == 10) // allowance or private car transportation
+                    expense.OfficialCurrency = "HRK";
+                else
+                    expense.OfficialCurrency = _countryAllowanceRepository.FindById(int.Parse(expense.OfficialCurrency)).OfficialCurrency; // not a foreign key
+            }
+
+            return new ViewAsPdf("Print", travelReport);
         }
     }
 }

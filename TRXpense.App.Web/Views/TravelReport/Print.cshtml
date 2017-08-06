@@ -1,0 +1,165 @@
+﻿@model TRXpense.App.Web.ViewModels.TravelReportVM
+
+<h2>Travel Report No. @Model.Id</h2>
+
+<div class="col-md-offset-1">
+    <div id="info">
+        <h4>Employee</h4>
+    </div>
+
+    <div class="col-md-offset-1">
+        <table>
+            <thead>
+                <tr>
+                    <td width="300px"><span>Name</span></td>
+                    <td>@Model.Employee.FirstName @Model.Employee.LastName</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span>Date of Birth</span></td>
+                    <td>@Model.Employee.DateOfBirth</td>
+                </tr>
+                <tr>
+                    <td><span>OIB</span></td>
+                    <td>@Model.Employee.OIB</td>
+                </tr>
+                <tr>
+                    <td><span>Phone</span></td>
+                    <td>@Model.Employee.Phone</td>
+                </tr>
+                <tr>
+                    <td><span>Position</span></td>
+                    <td>@Model.Employee.Position</td>
+                </tr>
+                <tr>
+                    <td><span>Cost Center</span></td>
+                    <td>@Model.Employee.CostCenter.Name</td>
+                </tr>
+                <tr>
+                    <td><span>Superior</span></td>
+                    <td>@Model.Employee.Superior.LastName</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="col-md-offset-1">
+    <div id="info">
+        <h4>Travel Report</h4>
+    </div>
+
+    <div class="col-md-offset-1">
+        <table>
+            <thead>
+                <tr>
+                    <td width="300px"><span>Departure</span></td>
+                    <td>@Model.Departure</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span>Return</span></td>
+                    <td>@Model.Return</td>
+                </tr>
+                <tr>
+                    <td><span>Country</span></td>
+                    <td>@Model.Country.Country</td>
+                </tr>
+                <tr>
+                    <td><span>City</span></td>
+                    <td>@Model.City</td>
+                </tr>
+                <tr>
+                    <td><span>Number of Hours</span></td>
+                    <td>@Model.NumberOfHours</td>
+                </tr>
+                <tr>
+                    <td><span>Number of Meals</span></td>
+                    <td>@Model.NumberOfMeals</td>
+                </tr>
+                <tr>
+                    <td><span>Number of Allowances</span></td>
+                    <td>@Model.NumberOfAllowances</td>
+                </tr>
+                <tr>
+                    <td><span>Allowance Amount Per Day</span></td>
+                    <td>@Model.Country.Amount @Model.Country.AllowanceCurrency</td>
+                </tr>
+                <tr>
+                    <td><span>Reason for Travel</span></td>
+                    <td>@Model.ReasonForTravel</td>
+                </tr>
+                <tr>
+                    <td><span>Vehicle</span></td>
+                    <td>@Model.VehicleType</td>
+                </tr>
+                <tr>
+                    <td><span>Registration</span></td>
+                    <td>@Model.CompanyVehicle.Registration</td>
+                </tr>
+                <tr>
+                    <td><span>Start Mileage</span></td>
+                    <td>@Model.StartMileage</td>
+                </tr>
+                <tr>
+                    <td><span>End Mileage</span></td>
+                    <td>@Model.EndMileage</td>
+                </tr>
+                <tr>
+                    <td><span>Deposit Amount</span></td>
+                    <td>@Model.DepositAmount HRK</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="col-md-offset-1">
+    <div id="info">
+        <h4>Expenses</h4>
+    </div>
+
+    <div class="col-md-offset-1">
+        <table class="table">
+            <thead>
+                <tr>
+                    <td><h4>Date</h4></td>
+                    <td><h4>Bill Number</h4></td>
+                    <td><h4>Bill Amount</h4></td>
+                    <td><h4>Currency</h4></td>
+                    <td><h4>Category</h4></td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var expense in Model.Expenses)
+                {
+                    <tr id="row_@expense.Id">
+                        <td>@expense.Date</td>
+                        <td>@expense.BillNumber</td>
+                        <td>@expense.BillAmount</td>
+                        <td>@expense.OfficialCurrency</td>
+                        <td>@expense.ExpenseCategory.Name</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="col-md-offset-1">
+    <div id="info">
+        <h4>Total For Payment</h4>
+    </div>
+
+    <div class="col-md-offset-1">
+        <table>
+            <thead>
+                <tr>
+                    <td width="300px"><h4>@Model.ExpenseSum HRK</h4></td>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>

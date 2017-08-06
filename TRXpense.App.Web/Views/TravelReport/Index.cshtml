@@ -69,7 +69,7 @@
                                     <td>
                                         <div class="controlButtons">
                                             @Html.ActionLink(" ", "Edit", "TravelReport", new { id = travelReport.Id }, new { @class = "btn btn-default glyphicon glyphicon-pencil" })
-                                            @Html.ActionLink(" ", "Details", "TravelReport", new { id = travelReport.Id }, new { @class = "modal-link btn btn-default glyphicon glyphicon-list" })
+                                            @Html.ActionLink(" ", "Print", "TravelReport", new { id = travelReport.Id }, new { @class = "btn btn-default glyphicon glyphicon-download-alt" })
                                             <a href="#" class="btn btn-danger" onclick="ConfirmDelete(@travelReport.Id)"><i class="glyphicon glyphicon-trash"></i> </a>
                                         </div>
                                     </td>

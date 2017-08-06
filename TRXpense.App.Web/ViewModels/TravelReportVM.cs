@@ -57,7 +57,7 @@ namespace TRXpense.App.Web.ViewModels
 
         [Display(Name = "Company Car")]
         public int? VehicleId { get; set; } // foreign key, nullable, hidden, otvara se samo ako je odabran VehicleType - CompanyCar
-        //public VehicleVM CompanyVehicle { get; set; }
+        public VehicleVM CompanyVehicle { get; set; }
         //public IEnumerable<VehicleVM> Vehicles { get; set; }
 
         [Display(Name = "Start Mileage")]

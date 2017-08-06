@@ -95,7 +95,7 @@ namespace TRXpense.App.Web.Controllers
             // prvi primjer popunjavanja dropdpwn liste (drugi se nalazi u Edit Action-u)
             var viewModel = new RegisterViewModel
             {
-                CostCenters = _costCenterRepository.GetAllFromDatabaseEnumerable().ToList(),
+                CostCenters = _costCenterRepository.GetAllFromDatabaseEnumerable().ToList().MapToViews(),
                 Superiors = _applicationUserRepository.GetAllFromDatabaseEnumerable().Where(s => s.UserRole == "Manager" || s.UserRole == "Director").ToList()
             };
 

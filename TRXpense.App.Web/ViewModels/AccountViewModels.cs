@@ -96,8 +96,8 @@ namespace TRXpense.App.Web.ViewModels
         [Required]
         [Display(Name = "Cost Center")]
         public int CostCenterId { get; set; } // id CC-a prosljeđujem u Register.cshtml kao ID za punjenje dropdowna
-        public IEnumerable<CostCenter> CostCenters { get; set; } // listu CC-a prosljeđujem u Register.html kao VALUE za punjenje dropdowna
-        public CostCenter CostCenter { get; set; } // CC koristim za mapiranje (zbog Details view-a)
+        public IEnumerable<CostCenterVM> CostCenters { get; set; } // listu CC-a prosljeđujem u Register.html kao VALUE za punjenje dropdowna
+        public CostCenterVM CostCenter { get; set; } // CC koristim za mapiranje (zbog Details view-a)
 
         [Required]
         [Display(Name = "Superior")]

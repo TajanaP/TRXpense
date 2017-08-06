@@ -23,7 +23,7 @@ namespace TRXpense.App.Web.Mappers
                 Phone = model.Phone,
                 Position = model.Position,
                 UserRole = model.UserRole,
-                CostCenter = model.CostCenter,
+                CostCenter = model.CostCenter.MapToView(),
                 CostCenterId = model.CostCenterId,
                 Superior = model.Superior,
                 SuperiorId = model.SuperiorId
@@ -60,7 +60,7 @@ namespace TRXpense.App.Web.Mappers
                 Phone = view.Phone,
                 Position = view.Position,
                 UserRole = view.UserRole,
-                CostCenter = view.CostCenter,
+                CostCenter = view.CostCenter.MapToModel(),
                 Superior = view.Superior
             };
         }

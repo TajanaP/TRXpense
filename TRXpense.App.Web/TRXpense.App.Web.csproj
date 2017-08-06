@@ -57,6 +57,10 @@
       <HintPath>..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Rotativa, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Rotativa.1.6.4\lib\net40\Rotativa.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -264,6 +268,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Rotativa\wkhtmltopdf.exe" />
     <Content Include="Scripts\bootbox.js" />
     <Content Include="Scripts\bootbox.min.js" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -355,6 +360,7 @@
     <Content Include="Scripts\bootstrap-datetimepicker.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="App_Browsers\qt.browser" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\i18n\jquery-ui-timepicker-addon-i18n.js" />
     <Content Include="Scripts\i18n\jquery-ui-timepicker-addon-i18n.min.js" />
@@ -481,10 +487,10 @@
     <Content Include="Views\TravelReport\Create.cshtml" />
     <Content Include="Views\TravelReport\Edit.cshtml" />
     <Content Include="Views\TravelReport\Index.cshtml" />
-    <Content Include="Views\TravelReport\_Details.cshtml" />
     <Content Include="Views\TravelReport\_EditExpense.cshtml" />
     <Content Include="Views\TravelReport\_CreateExpense.cshtml" />
     <Content Include="Views\TravelReport\_InfoMessage.cshtml" />
+    <Content Include="Views\TravelReport\Print.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
