@@ -68,12 +68,16 @@
                                     <td>@travelReport.ExpenseSum</td>
                                     <td>
                                         <div class="controlButtons">
-                                            @Html.ActionLink(" ", "Edit", "TravelReport", new { id = travelReport.Id }, new { @class = "btn btn-default glyphicon glyphicon-pencil" })
+                                            @if (travelReport.Status == TRXpense.Bll.Model.Status.Opened)
+                                            {
+                                                <a href="#" class="btn btn-primary" onclick="ConfirmClosing(@travelReport.Id)"><i class="glyphicon glyphicon-ok"></i> </a>
+                                                @Html.ActionLink(" ", "Edit", "TravelReport", new { id = travelReport.Id }, new { @class = "btn btn-default glyphicon glyphicon-pencil" })
+                                            }
                                             @Html.ActionLink(" ", "Print", "TravelReport", new { id = travelReport.Id }, new { @class = "btn btn-default glyphicon glyphicon-download-alt" })
                                             <a href="#" class="btn btn-danger" onclick="ConfirmDelete(@travelReport.Id)"><i class="glyphicon glyphicon-trash"></i> </a>
                                         </div>
                                     </td>
-                                </tr>
+                                    </tr>
                             }
                         </tbody>
                     </table>
@@ -111,6 +115,24 @@
         </div>
     </div>
 
+    <div class="modal fade" id="closeConfirmModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <a href="#" class="close" data-dismiss="modal">&times;</a>
+                    <h4 class="modal-title">Send for processing</h4>
+                </div>
+                <div class="modal-body">
+                    <p>By clicking on confirmation button this travel report will be sent to Finance for processing. You will no longer be able to make changes to this travel report!</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+                    <a href="#" class="btn btn-danger" onclick="CloseTravelReport()">Confirm</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @*hidden field for storing current itemId*@
     <input type="hidden" id="hiddenId" />
 </div>
@@ -118,6 +140,7 @@
 @section scripts
 {
     <script>
+        // delete travel report
         var ConfirmDelete = function (id) {
             $("#hiddenId").val(id);
             $("#deleteConfirmModal").modal('show');
@@ -132,6 +155,25 @@
                 success: function (result) {
                     $("#deleteConfirmModal").modal("hide");
                     $("#row_" + trId).remove();
+                    window.location.reload();
+                }
+            })
+        }
+
+        // close travel report
+        var ConfirmClosing = function (id) {
+            $("#hiddenId").val(id);
+            $("#closeConfirmModal").modal('show');
+        }
+
+        var CloseTravelReport = function () {
+            var trId = $("#hiddenId").val();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Close")',
+                data: { id: trId },
+                success: function () {
+                    $("#closeConfirmModal").modal("hide");
                     window.location.reload();
                 }
             })

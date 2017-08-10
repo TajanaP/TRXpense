@@ -1,0 +1,38 @@
+﻿@{
+    ViewBag.Title = "JOPPDPrint";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>JOPPD Report</h2>
+<hr />
+
+<div class="col-md-offset-1">
+    <div id="info">
+        <h3>Period @ViewBag.DateFrom - @ViewBag.DateTo</h3>
+    </div>
+
+    <div class="col-md-offset-1">
+        <table>
+            <thead>
+                <tr>
+                    <td width="400px"><span>Allowance Expenses</span></td>
+                    <td>@ViewBag.Allowance HRK</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span>Accomodation Expenses</span></td>
+                    <td>@ViewBag.Accomodation HRK</td>
+                </tr>
+                <tr>
+                    <td><span>Private Car Transportation Expenses</span></td>
+                    <td>@ViewBag.PrivateCarTransportation HRK</td>
+                </tr>
+                <tr>
+                    <td><h3><span>Sum</span></h3></td>
+                    <td><h3>@ViewBag.Sum HRK</h3></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -491,6 +491,8 @@
     <Content Include="Views\TravelReport\_CreateExpense.cshtml" />
     <Content Include="Views\TravelReport\_InfoMessage.cshtml" />
     <Content Include="Views\TravelReport\Print.cshtml" />
+    <Content Include="Views\TravelReport\JOPPD.cshtml" />
+    <Content Include="Views\TravelReport\JOPPDPrint.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

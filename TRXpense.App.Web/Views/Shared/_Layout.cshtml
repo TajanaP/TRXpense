@@ -38,10 +38,12 @@
                             </ul>
                         </li>
                         <li>@Html.ActionLink("Travel Reports", "Index", "TravelReport")</li>
+                        <li>@Html.ActionLink("JOPPD", "JOPPD", "TravelReport")</li>
                         <li>@Html.ActionLink("My Profile", "ViewProfile", "Account")</li>
                     }
                     else if (User.Identity.IsAuthenticated)
                     {
+                        <li>@Html.ActionLink("Travel Reports", "Index", "TravelReport")</li>
                         <li>@Html.ActionLink("My Profile", "ViewProfile", "Account")</li>
                     }
 

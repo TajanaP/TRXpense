@@ -1,0 +1,148 @@
+﻿@model TRXpense.App.Web.ViewModels.TravelReportVM
+
+@{
+    ViewBag.Title = "JOPPD";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />*@
+<h2>JOPPD</h2>
+<hr />
+
+@using (Html.BeginForm("GenerateJOPPD", "TravelReport", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            {
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary("", new { @class = "alert alert-danger" })
+
+    <div>
+        @*Another way*@
+        @*<div class="form-group">
+            <label class="col-md-2 control-label">Date from</label>
+            @Html.EditorFor(m => m.Departure, new { htmlAttributes = new { @class = "form-control date-picker", onkeydown = "return false", onpaste = "return false" } })
+            <label class="col-md-2 control-label">Date to</label>
+            @Html.EditorFor(m => m.Return, new { htmlAttributes = new { @class = "form-control date-picker", onkeydown = "return false", onpaste = "return false" } })
+        </div>*@
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Departure, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                <div class="container">
+                    <div class="row">
+                        <div class='col-sm-3'>
+                            <div class="form-group">
+                                <div class='input-group date' id='datetimepicker1'>
+                                    @Html.TextBoxFor(m => m.Departure@*, "{0:dd.MM.yyyy.}"*@, new { @class = "form-control registerDateBox", placeholder = "YYYY.MM.DD" })
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Return, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                <div class="container">
+                    <div class="row">
+                        <div class='col-sm-3'>
+                            <div class="form-group">
+                                <div class='input-group date' id='datetimepicker1'>
+                                    @Html.TextBoxFor(m => m.Return@*, "{0:dd.MM.yyyy.}"*@, new { @class = "form-control registerDateBox", placeholder = "YYYY.MM.DD" })
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr />
+        <input type="submit" class="btn btn-primary col-md-offset-11" value="Generate" />
+    </div>
+}
+
+
+@section Scripts {
+    @*<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>*@
+@Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+
+        $(function () {
+            var bindDatePicker = function () {
+                $(".date").datetimepicker({
+                    format: 'YYYY-MM-DD',
+                    icons: {
+                        time: "fa fa-clock-o",
+                        date: "fa fa-calendar",
+                        up: "fa fa-arrow-up",
+                        down: "fa fa-arrow-down"
+                    }
+                }).find('input:first').on("blur", function () {
+                    // check if the date is correct. We can accept dd-mm-yyyy and yyyy-mm-dd.
+                    // update the format if it's yyyy-mm-dd
+                    var date = parseDate($(this).val());
+
+                    if (!isValidDate(date)) {
+                        //create date based on momentjs (we have that)
+                        date = moment().format('YYYY-MM-DD');
+                    }
+
+                    $(this).val(date);
+                });
+            }
+
+            var isValidDate = function (value, format) {
+                format = format || false;
+                // lets parse the date to the best of our knowledge
+                if (format) {
+                    value = parseDate(value);
+                }
+
+                var timestamp = Date.parse(value);
+
+                return isNaN(timestamp) == false;
+            }
+
+            var parseDate = function (value) {
+                var m = value.match(/^(\d{1,2})(\/|-)?(\d{1,2})(\/|-)?(\d{4})$/);
+                if (m)
+                    value = m[5] + '-' + ("00" + m[3]).slice(-2) + '-' + ("00" + m[1]).slice(-2);
+
+                return value;
+            }
+
+            bindDatePicker();
+        });
+
+        @*Another way*@
+        //$(function () {
+        //    $(".date-picker").datepicker({
+        //        dateFormat: 'dd-M-yy',
+        //        changeMonth: true,
+        //        changeYear: true,
+        //        yearRange: "-10:+0", // You can set the year range as per as your need
+        //        controlType: 'select',
+        //    });
+        //});
+
+        //// Sometimes Google Chrome goes wild!! It throws a validation error message stating "The field Date must be a date." even if the input value is a date in correct format.
+        //// According to some StackOverFlow questions and answers it is a jquery.validate.js bug. To fix this issue, need to write some javascript code as follows:
+        //jQuery.validator.methods.date = function (value, element) {
+        //    var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+        //    if (isChrome) {
+        //        var d = new Date();
+        //        return this.optional(element) || !/Invalid|NaN/.test(new Date(d.toLocaleDateString(value)));
+        //    } else {
+        //        return this.optional(element) || !/Invalid|NaN/.test(new Date(value));
+        //    }
+        //};
+
+    </script>
+}

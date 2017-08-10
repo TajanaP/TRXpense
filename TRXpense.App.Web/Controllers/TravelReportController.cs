@@ -36,7 +36,20 @@ namespace TRXpense.App.Web.Controllers
         // GET: TravelReport
         public ActionResult Index(int? page, string query = null)
         {
-            var travelReports = _travelReportRepository.GetAllFromDatabaseEnumerable().ToList().MapToViews();
+            var travelReports = new List<TravelReportVM>();
+            var employeeId = User.Identity.GetUserId();
+
+            if (User.IsInRole("Admin")) // admin can see personal travelReports + all closed travelReports of other employees
+            {
+                var allTravelReports = _travelReportRepository.GetAllFromDatabaseEnumerable().ToList().MapToViews();
+                foreach (var report in allTravelReports)
+                {
+                    if (report.Status == Bll.Model.Status.Closed || report.EmployeeId == employeeId)
+                        travelReports.Add(report);
+                }
+            }
+            else // other emplyoees can only see personal travelReports
+                travelReports = _travelReportRepository.GetAllFromDatabaseEnumerable().Where(u => u.EmployeeId == employeeId).ToList().MapToViews();
 
             foreach (var report in travelReports) // get fixed values for TravelReport Index Table
             {
@@ -161,6 +174,120 @@ namespace TRXpense.App.Web.Controllers
                 return Json(new { });
 
             return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        [AllowAnonymous]
+        public ActionResult Print(int id)
+        {
+            var travelReport = _travelReportRepository.FindById(id).MapToView();
+
+            // Employee info
+            var employee = _applicationUserRepository.FindById(travelReport.EmployeeId).MapToView();
+            var costCenter = _costCenterRepository.FindById(employee.CostCenterId).MapToView();
+            var superior = _applicationUserRepository.FindById(employee.SuperiorId).MapToView();
+            employee.CostCenter = costCenter;
+            employee.Superior = superior.MapToModel();
+            travelReport.Employee = employee;
+
+            // TravelReport info
+            var country = _countryAllowanceRepository.FindById(travelReport.CountryAllowanceId).MapToView();
+            travelReport.Country = country;
+            if (travelReport.DepositAmount == null)
+                travelReport.DepositAmount = 0;
+            var vehicle = _vehicleRepository.GetAllFromDatabaseEnumerable().Where(v => v.Id == travelReport.VehicleId).SingleOrDefault().MapToView();
+            if (vehicle == null)
+                travelReport.CompanyVehicle = new VehicleVM();
+            else
+                travelReport.CompanyVehicle = vehicle;
+
+            // Expense info
+            var expenses = travelReport.Expenses.Where(e => e.TravelReportId == travelReport.Id).ToList();
+            foreach (var expense in expenses)
+            {
+                expense.ExpenseCategory = _expenseCategoryRepository.FindById(expense.ExpenseCategoryId).MapToView();
+
+                if (expense.ExpenseCategoryId == 1 || expense.ExpenseCategoryId == 10) // allowance or private car transportation
+                    expense.OfficialCurrency = "HRK";
+                else
+                    expense.OfficialCurrency = _countryAllowanceRepository.FindById(int.Parse(expense.OfficialCurrency)).OfficialCurrency; // not a foreign key
+            }
+
+            return new ViewAsPdf("Print", travelReport);
+        }
+
+        public ActionResult Close(int id)
+        {
+            var travelReport = _travelReportRepository.FindById(id);
+            travelReport.Status = Bll.Model.Status.Closed;
+            _travelReportRepository.UpdateInDatabase(travelReport, id);
+            _travelReportRepository.Save();
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult JOPPD()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult GenerateJOPPD(TravelReportVM view)
+        {
+            var travelReportsInGivenInterval = _travelReportRepository.GetAllFromDatabaseEnumerable()
+                .Where(d => d.Departure >= view.Departure && d.Return <= view.Return).ToList().MapToViews();
+
+            decimal allowanceExpenses = 0;
+            decimal accomodationExpenses = 0;
+            decimal privateCarTransportationExpenses = 0;
+
+            //var employees = _applicationUserRepository.GetAllFromDatabaseEnumerable().ToList().MapToViews();
+
+            //foreach (var employee in employees)
+            //{
+            //    var travelReports = new List<TravelReportVM>();
+
+            //    foreach (var travelReport in travelReportsInGivenInterval)
+            //    {
+            //        if (travelReport.EmployeeId == employee.Id)
+            //            travelReports.Add(travelReport);
+            //    }
+
+            //    foreach (var travelReport in travelReports)
+            //    {
+            //        var allowanceExpense = travelReport.Expenses.Where(e => e.ExpenseCategoryId == 1).SingleOrDefault();
+            //        allowanceExpenses += allowanceExpense.BillAmount;
+
+            //        var accomodationExpense = travelReport.Expenses.Where(e => e.ExpenseCategoryId == 3).ToList();
+            //        foreach (var exp in accomodationExpense)
+            //            accomodationExpenses += exp.BillAmount;
+
+            //        var privateCarTransportationExpense = travelReport.Expenses.Where(e => e.ExpenseCategoryId == 10).SingleOrDefault();
+            //        if (privateCarTransportationExpense != null)
+            //            privateCarTransportationExpenses += privateCarTransportationExpense.BillAmount;
+            //    }
+            //}
+
+            foreach (var travelReport in travelReportsInGivenInterval)
+            {
+                var allowanceExpense = travelReport.Expenses.Where(e => e.ExpenseCategoryId == 1).SingleOrDefault();
+                allowanceExpenses += allowanceExpense.BillAmount;
+
+                var accomodationExpense = travelReport.Expenses.Where(e => e.ExpenseCategoryId == 3).ToList();
+                foreach (var exp in accomodationExpense)
+                    accomodationExpenses += exp.BillAmount;
+
+                var privateCarTransportationExpense = travelReport.Expenses.Where(e => e.ExpenseCategoryId == 10).SingleOrDefault();
+                if (privateCarTransportationExpense != null)
+                    privateCarTransportationExpenses += privateCarTransportationExpense.BillAmount;
+            }
+
+            ViewBag.DateFrom = view.Departure.ToShortDateString();
+            ViewBag.DateTo = view.Return.ToShortDateString();
+            ViewBag.Allowance = allowanceExpenses;
+            ViewBag.Accomodation = accomodationExpenses;
+            ViewBag.PrivateCarTransportation = privateCarTransportationExpenses;
+            ViewBag.Sum = allowanceExpenses + accomodationExpenses + privateCarTransportationExpenses;
+
+            return new ViewAsPdf("JOPPDPrint");
         }
 
         // EXPENSE
@@ -655,45 +782,6 @@ namespace TRXpense.App.Web.Controllers
                 ViewBag.SuccessMessage = TempData["travelReportDeletedMessage"].ToString();
             if (TempData["travelReportErrorMessage"] != null)
                 ViewBag.FailureMessage = TempData["travelReportErrorMessage"].ToString();
-        }
-
-        [AllowAnonymous]
-        public ActionResult Print(int id)
-        {
-            var travelReport = _travelReportRepository.FindById(id).MapToView();
-
-            // Employee info
-            var employee = _applicationUserRepository.FindById(travelReport.EmployeeId).MapToView();
-            var costCenter = _costCenterRepository.FindById(employee.CostCenterId).MapToView();
-            var superior = _applicationUserRepository.FindById(employee.SuperiorId).MapToView();
-            employee.CostCenter = costCenter;
-            employee.Superior = superior.MapToModel();
-            travelReport.Employee = employee;
-
-            // TravelReport info
-            var country = _countryAllowanceRepository.FindById(travelReport.CountryAllowanceId).MapToView();
-            travelReport.Country = country;
-            if (travelReport.DepositAmount == null)
-                travelReport.DepositAmount = 0;
-            var vehicle = _vehicleRepository.GetAllFromDatabaseEnumerable().Where(v => v.Id == travelReport.VehicleId).SingleOrDefault().MapToView();
-            if (vehicle == null)
-                travelReport.CompanyVehicle = new VehicleVM();
-            else
-                travelReport.CompanyVehicle = vehicle;
-
-            // Expense info
-            var expenses = travelReport.Expenses.Where(e => e.TravelReportId == travelReport.Id).ToList();
-            foreach (var expense in expenses)
-            {
-                expense.ExpenseCategory = _expenseCategoryRepository.FindById(expense.ExpenseCategoryId).MapToView();
-
-                if (expense.ExpenseCategoryId == 1 || expense.ExpenseCategoryId == 10) // allowance or private car transportation
-                    expense.OfficialCurrency = "HRK";
-                else
-                    expense.OfficialCurrency = _countryAllowanceRepository.FindById(int.Parse(expense.OfficialCurrency)).OfficialCurrency; // not a foreign key
-            }
-
-            return new ViewAsPdf("Print", travelReport);
         }
     }
 }
