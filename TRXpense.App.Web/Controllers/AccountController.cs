@@ -24,17 +24,19 @@ namespace TRXpense.App.Web.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ICostCenterRepository _costCenterRepository;
         private readonly IApplicationUserRepository _applicationUserRepository;
+        private readonly ITravelReportRepository _travelReportRepository;
 
         public AccountController()
         {
             _context = new ApplicationDbContext();
             _costCenterRepository = new CostCenterRepository();
             _applicationUserRepository = new ApplicationUserRepository();
+            _travelReportRepository = new TravelReportRepository();
         }
 
         public ActionResult Index(int? page, string query = null)
         {
-            var employees = _applicationUserRepository.GetAllFromDatabaseEnumerable().ToList().MapToViews();
+            var employees = _applicationUserRepository.GetAllFromDatabaseEnumerable().ToList().MapToViews().OrderBy(o => o.FirstName);
 
             if (TempData["message"] != null)
                 ViewBag.Message = TempData["message"].ToString();
@@ -42,7 +44,7 @@ namespace TRXpense.App.Web.Controllers
             // paging
             int pageSize = 5;
             var pageNumber = page ?? 1; // if no page was specified in the querystring, default to the first page (1)
-            var onePageOfEmployees = employees.ToPagedList(pageNumber, pageSize); // will only contain 5 products max because of the pageSize
+            var onePageOfEmployees = employees.ToPagedList(pageNumber, pageSize); // will only contain 5 items max because of the pageSize
 
             // searching
             if (!string.IsNullOrEmpty(query))
@@ -51,7 +53,7 @@ namespace TRXpense.App.Web.Controllers
                     .Where(u => u.FirstName.ToLower().Contains(query.ToLower())
                         || u.LastName.ToLower().Contains(query.ToLower())
                         || u.Position.ToLower().Contains(query.ToLower())
-                        || u.UserRole.ToLower().Equals(query.ToLower()))
+                        || u.UserRole.ToLower().Contains(query.ToLower()))
                     .ToList()
                     .MapToViews();
 
@@ -75,6 +77,15 @@ namespace TRXpense.App.Web.Controllers
         // individual profile to be viewed by employee
         public ActionResult ViewProfile()
         {
+            FillDropdownValuesForUsers();
+            FillDropdownValuesForCostCenters();
+
+            ViewBag.Roles = _context.Roles.
+                OrderBy(r => r.Name).
+                ToList().
+                Select(rr =>
+                    new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
+
             var userId = User.Identity.GetUserId();
             var user = _context.Users.Include(c => c.CostCenter).Include(s => s.Superior).SingleOrDefault(u => u.Id == userId).MapToViewEdit();
 
@@ -208,10 +219,11 @@ namespace TRXpense.App.Web.Controllers
         public JsonResult Delete(string id)
         {
             var userInDB = _applicationUserRepository.FindById(id);
-            var subordinates = _applicationUserRepository.GetAllFromDatabaseEnumerable().Where(s => s.SuperiorId == id).ToList();
+            var subordinates = _applicationUserRepository.GetAllFromDatabaseEnumerable().Where(s => s.SuperiorId == id).ToList().MapToViews();
+            var travelReports = _travelReportRepository.GetAllFromDatabaseEnumerable().Where(t => t.EmployeeId == id).ToList().MapToViews();
             bool result = false;
 
-            if (subordinates.Count == 0 && userInDB != null)
+            if (subordinates.Count == 0 && travelReports.Count == 0 && userInDB != null)
             {
                 _applicationUserRepository.DeleteFromDatabase(userInDB);
                 _applicationUserRepository.Save();
@@ -298,7 +310,8 @@ namespace TRXpense.App.Web.Controllers
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
-            return PartialView("_Login");
+            return RedirectToAction("Index", "Home");
+            //return PartialView("_Login");
         }
 
         //

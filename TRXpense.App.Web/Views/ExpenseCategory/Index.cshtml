@@ -112,29 +112,31 @@
             $.ajax({
 
                 type: "POST",
-                url: '@Url.Action("Delete")', @* or "/Vehicle/Delete"*@
+                url: '@Url.Action("Delete")', @* or "/ExpenseCategory/Delete"*@
                 data: { id: ecId },
                 success: function (result) {
-                    // if vehicle is assigned to employee
-                    //if (result != true) {
-                    //    bootbox.dialog({
-                    //        message: "This vehicle is assigned to an employee"
-                    //            + "</br>"
-                    //            + "You can only delete vehicles that are not assigned to employees.",
-                    //        title: "<span style='color:#e20a0a;'><strong> Warning </strong></span> "
-                    //            + '<span style="color:#e20a0a;" class="glyphicon glyphicon-warning-sign"></span>',
-                    //        buttons: {
-                    //            success: {
-                    //                label: "Close",
-                    //                className: "btn-default",
-                    //            },
-                    //        }
-                    //    });
-                    //    $("#deleteConfirmModal").modal("hide");
-                    //}
-                    // if vehicle is not assinged to employee
-                    $("#deleteConfirmModal").modal("hide");
-                    $("#row_" + ecId).remove();
+                    // if expenseCategory is assigned to expense
+                    if (result != true) {
+                        bootbox.dialog({
+                            message: "This expense category is assigned to one or more expenses!"
+                                + "</br>"
+                                + "You can only delete expense categories that are not assigned to expenses.",
+                            title: "<span style='color:#e20a0a;' class='glyphicon glyphicon-warning-sign'></span>"
+                                + "<span style='color:#e20a0a;'><strong> Warning </strong></span> ",
+                            buttons: {
+                                success: {
+                                    label: "Close",
+                                    className: "btn-default",
+                                },
+                            }
+                        });
+                        $("#deleteConfirmModal").modal("hide");
+                    }
+                    // if expenseCategory is assigned to expense
+                    else {
+                        $("#deleteConfirmModal").modal("hide");
+                        $("#row_" + ecId).remove();
+                    }
                 }
             })
         }

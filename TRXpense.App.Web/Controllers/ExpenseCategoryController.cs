@@ -10,21 +10,23 @@ namespace TRXpense.App.Web.Controllers
     public class ExpenseCategoryController : Controller
     {
         private readonly IExpenseCategoryRepository _expenseCategoryRepository;
+        private readonly IExpenseRepository _expenseRepository;
 
         public ExpenseCategoryController()
         {
             _expenseCategoryRepository = new ExpenseCategoryRepository();
+            _expenseRepository = new ExpenseRepository();
         }
 
         // GET: ExpenseCategory
         public ActionResult Index(int? page, string query = null)
         {
-            var expenseCategories = _expenseCategoryRepository.GetAllFromDatabaseEnumerable().ToList().MapToViews();
+            var expenseCategories = _expenseCategoryRepository.GetAllFromDatabaseEnumerable().ToList().MapToViews().OrderBy(o => o.Name);
 
             // paging
             var pageSize = 5;
             var pageNumber = page ?? 1; // if no page was specified in the querystring, default to the first page (1)
-            var onePageOfExpenseCategories = expenseCategories.ToPagedList(pageNumber, pageSize); // will only contain 5 products max because of the pageSize
+            var onePageOfExpenseCategories = expenseCategories.ToPagedList(pageNumber, pageSize); // will only contain 5 items max because of the pageSize
 
             //searching
             if (!string.IsNullOrEmpty(query))
@@ -58,20 +60,18 @@ namespace TRXpense.App.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Save(ExpenseCategoryVM expenseCategory)
+        public ActionResult Save(ExpenseCategoryVM view)
         {
-            ModelState.Remove("id");
+            ModelState.Remove("Id");
+            if (ModelState.IsValid)
+            {
+                if (view.Id == 0)
+                    _expenseCategoryRepository.AddToDatabase(view.MapToModel());
+                else
+                    _expenseCategoryRepository.UpdateInDatabase(view.MapToModel(), view.Id);
 
-            if (!ModelState.IsValid)
-                return RedirectToAction("Index");
-
-            if (expenseCategory.Id == 0)
-                _expenseCategoryRepository.AddToDatabase(expenseCategory.MapToModel());
-            else
-                _expenseCategoryRepository.UpdateInDatabase(expenseCategory.MapToModel(), expenseCategory.Id);
-
-            _expenseCategoryRepository.Save();
-
+                _expenseCategoryRepository.Save();
+            }
             return RedirectToAction("Index");
         }
 
@@ -79,8 +79,10 @@ namespace TRXpense.App.Web.Controllers
         {
             var expenseCategoryInDb = _expenseCategoryRepository.FindById(id);
             bool result = false;
+            var expensesThatHaveThisCategory =
+                _expenseRepository.GetAllFromDatabaseEnumerable().Where(e => e.ExpenseCategoryId == id).ToList();
 
-            if (expenseCategoryInDb != null)
+            if (expensesThatHaveThisCategory.Count == 0 && expenseCategoryInDb != null)
             {
                 _expenseCategoryRepository.DeleteFromDatabase(expenseCategoryInDb);
                 _expenseCategoryRepository.Save();

@@ -50,9 +50,19 @@
                 </div>
                 <div class="form-group">
                     @Html.LabelFor(m => m.Departure, new { @class = "col-md-2 control-label" })
-                    @Html.EditorFor(m => m.Departure, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
+                    <div class="form-group input-group date" id="datetimepickerDeparture">
+                        @Html.EditorFor(m => m.Departure, new { htmlAttributes = new { Value = Model.Departure.ToString(), @class = "form-control", placeholder = "YYYY.MM.DD", onkeydown = "return false", onpaste = "return false" } })
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
                     @Html.LabelFor(m => m.Return, new { @class = "col-md-2 control-label" })
-                    @Html.EditorFor(m => m.Return, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
+                    <div class="form-group input-group date" id="datetimepickerReturn">
+                        @Html.EditorFor(m => m.Return, new { htmlAttributes = new { Value = Model.Return.ToString(), @class = "form-control", placeholder = "YYYY.MM.DD", onkeydown = "return false", onpaste = "return false" } })
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
                 </div>
                 <div class="form-group">
                     @Html.LabelFor(m => m.NumberOfMeals, new { @class = "col-md-2 control-label" })
@@ -92,14 +102,18 @@
                         @Html.EditorFor(m => m.EndMileage, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
                     </div>
                 </div>
-                @*<div class="form-group">
-                    @Html.LabelFor(m => m.Deposit, new { @class = "col-md-2 control-label" })
-                    @Html.CheckBoxFor(m => m.Deposit, new { @class = "col-md-4 form-control" })
+                <div class="form-group" id="hiddenDepositForm">
+                    <div id="hiddenDepositField">
+                        @Html.LabelFor(m => m.Deposit, new { @class = "col-md-2 control-label" })
+                        <div id="depositCheckbox" class="col-md-2 form-group">
+                            @Html.CheckBoxFor(m => m.Deposit, new { @class = "", id = "Deposit" })
+                        </div>
+                    </div>
                     <div id="hiddenDepositField">
                         @Html.LabelFor(m => m.DepositAmount, new { @class = "col-md-2 control-label" })
-                        @Html.EditorFor(m => m.DepositAmount, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
+                        @Html.EditorFor(m => m.DepositAmount, new { htmlAttributes = new { @class = "col-md-4 form-control", id = "DepositField" } })
                     </div>
-                </div>*@
+                </div>
                 <div class="form-group">
                     @Html.LabelFor(m => m.ExpenseSum, new { @class = "col-md-2 control-label" })
                     @Html.EditorFor(m => m.ExpenseSum, new { htmlAttributes = new { @class = "col-md-4 form-control", disabled = "disabled" } })
@@ -190,19 +204,21 @@
     @Scripts.Render("~/bundles/jqueryval")
 
     <script>
-
-        // show mileage fields and dropdown with registrations if "Company car" is selected
-        // show mileage fields if "Private Car" is selected
-        $(function () {
-            if ($('#VehicleType').val() == '1') {           // COMPANY CAR
-                $('#hiddenRegistrationDropdown').show();
-                $('#hiddenMileageForm').show();
-            } else if ($('#VehicleType').val() == '0') {    // PRIVATE CAR
-                $('#hiddenMileageForm').show();
-                $('#hiddenRegistrationDropdown').hide();
-            }
+        $('#datetimepickerDeparture').datetimepicker({
+            format: ''
+        }).on('changeDate', function (ev) {
+            $(this).datetimepicker('hide');
         });
 
+        $('#datetimepickerReturn').datetimepicker({
+            format: ''
+        }).on('changeDate', function (ev) {
+                $(this).datetimepicker('hide');
+        });
+
+        // on change
+        // show mileage fields and dropdown with registrations if "Company car" is selected
+        // show mileage fields if "Private Car" is selected
         $(function () {
             $('#VehicleType').change(function () {
                 var value = $(this).val();
@@ -219,6 +235,8 @@
                     $('#hiddenMileageForm').show();
                     $('#StartMileage').prop("required", true);
                     $('#EndMileage').prop("required", true);
+                    $('#StartMileage').val(null);
+                    $('#EndMileage').val(null);
                     $.validator.messages.required = 'Mileage field is required.';
                     $('#hiddenRegistrationDropdown').hide();
                     $('#VehicleId').prop("required", false);
@@ -236,19 +254,35 @@
             });
         });
 
-        // show deposit field if deposit checkbox is checked
-        //$('#Deposit').change(function () {
-        //    if ($(this).is(":checked")) {
-        //        $("#hiddenDepositField").show();
-        //        $('#DepositField').prop("required", true);
-        //        $.validator.messages.required = 'Deposit Amount is required.';
-        //    }
-        //    else {
-        //        $("#hiddenDepositField").hide();
-        //        $('#DepositField').prop("required", false);
-        //        $('#VehicleId').val(null);
-        //    }
-        //});
+        // default
+        // show mileage fields and dropdown with registrations if "Company car" is selected
+        // show mileage fields if "Private Car" is selected
+        var value = $('#VehicleType').val();
+        if (value == '1') {                                                             // COMPANY CAR
+            $('#hiddenRegistrationDropdown').show();
+            $('#VehicleId').prop("required", true);
+            $.validator.messages.required = 'Company Car Registration is required.';
+            $('#hiddenMileageForm').show();
+            $('#StartMileage').prop("required", false);
+            $('#EndMileage').prop("required", false);
+        } else if (value == '0') {                                                      // PRIVATE CAR
+            $('#hiddenMileageForm').show();
+            $('#StartMileage').prop("required", true);
+            $('#EndMileage').prop("required", true);
+            $.validator.messages.required = 'Mileage field is required.';
+            $('#hiddenRegistrationDropdown').hide();
+            $('#VehicleId').prop("required", false);
+            $('#VehicleId').val(null);
+        } else {                                                                        // OTHER
+            $('#hiddenRegistrationDropdown').hide();
+            $('#VehicleId').prop("required", false);
+            $('#VehicleId').val(null);
+            $('#hiddenMileageForm').hide();
+            $('#StartMileage').prop("required", false);
+            $('#EndMileage').prop("required", false);
+            $('#StartMileage').val(null);
+            $('#EndMileage').val(null);
+        }
 
         // fill allowance (amount & currency) based on selected country
         function FillAllowanceAmount() {
@@ -283,8 +317,8 @@
                             message: "You can not delete this expense!"
                                 + "</br>"
                                 + "Please change data in report to change/delete this expense.",
-                            title: "<span style='color:#e20a0a;'><strong> Warning </strong></span> "
-                                + '<span style="color:#e20a0a;" class="glyphicon glyphicon-warning-sign"></span>',
+                            title: "<span style='color:#e20a0a;' class='glyphicon glyphicon-warning-sign'></span>"
+                                + "<span style='color:#e20a0a;'><strong> Warning </strong></span> ",
                             buttons: {
                                 success: {
                                     label: "Close",
@@ -303,6 +337,5 @@
                 }
             })
         }
-
     </script>
 }

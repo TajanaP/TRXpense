@@ -26,9 +26,19 @@
         </div>
         <div class="form-group">
             @Html.LabelFor(m => m.Departure, new { @class = "col-md-2 control-label" })
-            @Html.EditorFor(m => m.Departure, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
+            <div class="form-group input-group date" id="datetimepickerDeparture">
+                @Html.EditorFor(m => m.Departure, new { htmlAttributes = new { @class = "form-control", placeholder = "YYYY.MM.DD", onkeydown = "return false", onpaste = "return false" } })
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
             @Html.LabelFor(m => m.Return, new { @class = "col-md-2 control-label" })
-            @Html.EditorFor(m => m.Return, new { htmlAttributes = new { @class = "col-md-4 form-control" } })
+            <div class="form-group input-group date" id="datetimepickerReturn">
+                @Html.EditorFor(m => m.Return, new { htmlAttributes = new { @class = "form-control", placeholder = "YYYY.MM.DD", onkeydown = "return false", onpaste = "return false" } })
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
         </div>
         <div class="form-group">
             @Html.LabelFor(m => m.CountryAllowanceId, new { @class = "col-md-2 control-label" })
@@ -60,7 +70,9 @@
         </div>
         <div class="form-group">
             @Html.LabelFor(m => m.Deposit, new { @class = "col-md-2 control-label" })
-            @Html.CheckBoxFor(m => m.Deposit, new { @class = "col-md-4 form-control", id = "Deposit" })
+            <div id="depositCheckbox" class="col-md-2 form-group">
+                @Html.CheckBoxFor(m => m.Deposit, new { @class = "", id = "Deposit" })
+            </div>
             <div id="hiddenDepositField">
                 @Html.LabelFor(m => m.DepositAmount, new { @class = "col-md-2 control-label" })
                 @Html.EditorFor(m => m.DepositAmount, new { htmlAttributes = new { @class = "col-md-4 form-control", id = "DepositField" } })
@@ -75,6 +87,17 @@
     @Scripts.Render("~/bundles/jqueryval")
 
     <script>
+        $('#datetimepickerDeparture').datetimepicker({
+            format: ''
+        }).on('changeDate', function (ev) {
+            $(this).datetimepicker('hide');
+        });
+
+        $('#datetimepickerReturn').datetimepicker({
+            format: ''
+        }).on('changeDate', function (ev) {
+            $(this).datetimepicker('hide');
+        });
 
         // show mileage fields and dropdown with registrations if "Company car" is selected
         // show mileage fields if "Private Car" is selected
@@ -94,6 +117,8 @@
                     $('#hiddenMileageForm').show();
                     $('#StartMileage').prop("required", true);
                     $('#EndMileage').prop("required", true);
+                    $('#StartMileage').val(null);
+                    $('#EndMileage').val(null);
                     $.validator.messages.required = 'Mileage field is required.';
                     $('#hiddenRegistrationDropdown').hide();
                     $('#VehicleId').prop("required", false);

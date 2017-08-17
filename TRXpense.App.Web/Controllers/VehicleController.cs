@@ -10,21 +10,23 @@ namespace TRXpense.App.Web.Controllers
     public class VehicleController : Controller
     {
         private readonly IVehicleRepository _vehicleRepository;
+        private readonly ITravelReportRepository _travelReportRepository;
 
         public VehicleController()
         {
             _vehicleRepository = new VehicleRepository();
+            _travelReportRepository = new TravelReportRepository();
         }
 
         // GET: Vehicle
         public ActionResult Index(int? page, string query = null)
         {
-            var vehicles = _vehicleRepository.GetAllFromDatabaseEnumerable().ToList().MapToViews();
+            var vehicles = _vehicleRepository.GetAllFromDatabaseEnumerable().ToList().MapToViews().OrderBy(o => o.Brand);
 
             // paging
             int pageSize = 5;
             var pageNumber = page ?? 1; // if no page was specified in the querystring, default to the first page (1)
-            var onePageOfVehicles = vehicles.ToPagedList(pageNumber, pageSize); // will only contain 5 products max because of the pageSize
+            var onePageOfVehicles = vehicles.ToPagedList(pageNumber, pageSize); // will only contain 5 items max because of the pageSize
 
             // searching
             if (!string.IsNullOrEmpty(query))
@@ -61,20 +63,18 @@ namespace TRXpense.App.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Save(VehicleVM vehicle)
+        public ActionResult Save(VehicleVM view)
         {
             ModelState.Remove("Id");
+            if (ModelState.IsValid)
+            {
+                if (view.Id == 0)
+                    _vehicleRepository.AddToDatabase(view.MapToModel());
+                else
+                    _vehicleRepository.UpdateInDatabase(view.MapToModel(), view.Id);
 
-            if (!ModelState.IsValid)
-                return RedirectToAction("Index");
-
-            if (vehicle.Id == 0)
-                _vehicleRepository.AddToDatabase(vehicle.MapToModel());
-            else
-                _vehicleRepository.UpdateInDatabase(vehicle.MapToModel(), vehicle.Id);
-
-            _vehicleRepository.Save();
-
+                _vehicleRepository.Save();
+            }
             return RedirectToAction("Index");
         }
 
@@ -82,8 +82,10 @@ namespace TRXpense.App.Web.Controllers
         {
             var vehicleInDB = _vehicleRepository.FindById(id);
             bool result = false;
+            var travelReportsThatUseThisVehicle =
+                    _travelReportRepository.GetAllFromDatabaseEnumerable().Where(v => v.VehicleId == id).ToList().MapToViews();
 
-            if (vehicleInDB != null)
+            if (travelReportsThatUseThisVehicle.Count == 0 && vehicleInDB != null)
             {
                 _vehicleRepository.DeleteFromDatabase(vehicleInDB);
                 _vehicleRepository.Save();

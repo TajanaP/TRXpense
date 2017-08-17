@@ -62,18 +62,16 @@ namespace TRXpense.App.Web.Controllers
             // paging
             int pageSize = 10;
             var pageNumber = page ?? 1; // if no page was specified in the querystring, default to the first page (1)
-            var onePageOfTravelReports = travelReports.ToPagedList(pageNumber, pageSize); // will only contain 10 products max because of the pageSize
+            var onePageOfTravelReports = travelReports.ToPagedList(pageNumber, pageSize); // will only contain 10 items max because of the pageSize
 
             // searching
             if (!string.IsNullOrEmpty(query))
             {
-                //int i;
                 var travelReportSearched = travelReports
                     .Where(m => m.Employee.FirstName.ToLower().Contains(query.ToLower())
                     || m.Employee.LastName.ToLower().Contains(query.ToLower())
                     || m.Country.Country.ToLower().Contains(query.ToLower()));
-                //    || v.Departure.Equals(int.TryParse(query, out i) ? i : (int?)null)
-                //    || v.Return.Equals(int.TryParse(query, out i) ? i : (int?)null))
+                //|| m.Departure.Equals(query));
 
                 onePageOfTravelReports = travelReportSearched.ToPagedList(pageNumber, pageSize);
             }
@@ -112,7 +110,7 @@ namespace TRXpense.App.Web.Controllers
                 view.Id = latestId;
 
                 CalculateAllowanceExpenses(view);
-                CalculateMileageExpenses(view);
+                CalculatePrivateCarMileageExpenses(view);
                 CalculateExpenseSum(view);
             }
             else
@@ -126,6 +124,8 @@ namespace TRXpense.App.Web.Controllers
         public ActionResult Edit(int id)
         {
             var travelReport = _travelReportRepository.FindById(id).MapToView();
+            if (travelReport == null)
+                return HttpNotFound();
 
             FillDropDownValuesForCountry();
             FillDropDownValuesForVehicleRegistration();
@@ -144,7 +144,7 @@ namespace TRXpense.App.Web.Controllers
             if (TempData["wrongNumberOfMeals"] != null)
                 return RedirectToAction("Edit/" + view.Id);
 
-            CalculateMileageExpenses(view);
+            CalculatePrivateCarMileageExpenses(view);
             CalculateExpenseSum(view);
             CheckTempDataMessages();
 
@@ -222,6 +222,13 @@ namespace TRXpense.App.Web.Controllers
             _travelReportRepository.UpdateInDatabase(travelReport, id);
             _travelReportRepository.Save();
             return RedirectToAction("Index");
+        }
+
+        public ActionResult SendForApproval(int id)
+        {
+            // send to e-mail
+            bool result = true;
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult JOPPD()
@@ -308,19 +315,22 @@ namespace TRXpense.App.Web.Controllers
         public ActionResult EditExpense(int id)
         {
             var expense = _expenseRepository.FindById(id).MapToView();
+            if (expense == null)
+                return HttpNotFound();
+
             FillDropDownValuesForOfficialCurrency();
             FillDropDownValuesForExpenseCategory();
 
             // Allowance and Private Car Transportation can NOT be edited
             if (expense.ExpenseCategoryId == 1)
             {
-                TempData["allowanceExpenseCanNotBeEditedMessage"] = "Allowance expense is calculated from departure/return dates, you can not edit it here!";
+                TempData["allowanceExpenseCanNotBeEditedMessage"] = "Allowance expense is calculated from departure/return dates and can not be edited here!";
                 ViewBag.WarningMessage = TempData["allowanceExpenseCanNotBeEditedMessage"].ToString();
                 return PartialView("_InfoMessage");
             }
             else if (expense.ExpenseCategoryId == 10)
             {
-                TempData["privateCarExpenseCanNotBeEditedMessage"] = "Private Car expense is calculated from start/end mileage, you can not edit it here!";
+                TempData["privateCarExpenseCanNotBeEditedMessage"] = "Private Car expense is calculated from start/end mileage and can not be edited here!";
                 ViewBag.WarningMessage = TempData["privateCarExpenseCanNotBeEditedMessage"].ToString();
                 return PartialView("_InfoMessage");
             }
@@ -337,34 +347,26 @@ namespace TRXpense.App.Web.Controllers
                 if (view.Id == 0)
                 {
                     _expenseRepository.AddToDatabase(view.MapToModel());
-                    _expenseRepository.Save();
                     TempData["expenseCreatedOrUpdatedMessage"] = "Expense successfully created!";
                 }
                 else
                 {
                     _expenseRepository.UpdateInDatabase(view.MapToModel(), view.Id);
-                    _expenseRepository.Save();
                     TempData["expenseCreatedOrUpdatedMessage"] = "Expense successfully updated!";
                 }
+                _expenseRepository.Save();
+
+                // calculate ExchangeRate for ExpenseSum if neccessary
+                var travelReport = _travelReportRepository.FindById(view.TravelReportId).MapToView();
+                var country = _countryAllowanceRepository
+                    .GetAllFromDatabaseEnumerable()
+                    .Where(c => c.Id == travelReport.CountryAllowanceId)
+                    .SingleOrDefault()
+                    .MapToView();
+
+                travelReport.ExpenseSum = 0;
+                CalculateExpenseSum(travelReport);
             }
-
-            // calculate ExchangeRate for ExpenseSum if neccessary
-            var travelReport = _travelReportRepository.FindById(view.TravelReportId).MapToView();
-            var country = _countryAllowanceRepository
-                .GetAllFromDatabaseEnumerable()
-                .Where(c => c.Id == travelReport.CountryAllowanceId)
-                .SingleOrDefault()
-                .MapToView();
-
-            travelReport.ExpenseSum = 0;
-            if (country.OfficialCurrency != "HRK")
-            {
-                view.OfficialCurrency = _countryAllowanceRepository.FindById(int.Parse(view.OfficialCurrency)).OfficialCurrency;
-                if (view.OfficialCurrency != "HRK")
-                    view.BillAmount = CalculateExchangeRate(country.OfficialCurrency, view.Date, view.BillAmount);
-            }
-            CalculateExpenseSum(travelReport);
-
             return RedirectToAction("Edit/" + view.TravelReportId);
         }
 
@@ -483,9 +485,9 @@ namespace TRXpense.App.Web.Controllers
             ViewBag.Categories = selectItems;
         }
 
-        private void GetFixedValuesForTravelReportEditFormAndExpenseIndexTable(TravelReportVM travelReport)
+        private void GetFixedValuesForTravelReportEditFormAndExpenseIndexTable(TravelReportVM view)
         {
-            var expenses = travelReport.Expenses.Where(e => e.TravelReportId == travelReport.Id).ToList();
+            var expenses = view.Expenses.Where(e => e.TravelReportId == view.Id).ToList();
 
             // get expenseCategory for ExpenseIndexTable and allways show Allowance currency and PrivateCarTransportation currency as "HRK"
             foreach (var expense in expenses)
@@ -504,17 +506,24 @@ namespace TRXpense.App.Web.Controllers
             ViewBag.User = userInDb.FirstName + " " + userInDb.LastName;
 
             // auto-fill DailyAllowance
-            var allowance = _countryAllowanceRepository.FindById(travelReport.CountryAllowanceId).MapToView();
+            var allowance = _countryAllowanceRepository.FindById(view.CountryAllowanceId).MapToView();
             ViewBag.Allowance = allowance.Amount + " " + allowance.AllowanceCurrency;
         }
 
-        private void CalculateExpenseSum(TravelReportVM travelReport)
+        private void CalculateExpenseSum(TravelReportVM view)
         {
-            var expenses = _expenseRepository.GetAllFromDatabaseEnumerable().Where(t => t.TravelReportId == travelReport.Id).ToList();
+            var expenses = _expenseRepository.GetAllFromDatabaseEnumerable().Where(t => t.TravelReportId == view.Id).ToList();
             foreach (var expense in expenses)
-                travelReport.ExpenseSum = travelReport.ExpenseSum + expense.BillAmount;
+            {
+                if (expense.Currency != "HRK" && expense.Currency != "1") // if not HRK --> calculate exchange rate
+                {
+                    expense.Currency = _countryAllowanceRepository.FindById(int.Parse(expense.Currency)).OfficialCurrency; // from int to string
+                    expense.BillAmount = CalculateExchangeRate(expense.Currency, expense.Date, expense.BillAmount);
+                }
+                view.ExpenseSum = view.ExpenseSum + expense.BillAmount;
+            }
 
-            _travelReportRepository.UpdateInDatabase(travelReport.MapToModel(), travelReport.Id);
+            _travelReportRepository.UpdateInDatabase(view.MapToModel(), view.Id);
             _travelReportRepository.Save();
         }
 
@@ -689,10 +698,9 @@ namespace TRXpense.App.Web.Controllers
             _expenseRepository.Save();
         }
 
-        private void CalculateMileageExpenses(TravelReportVM view)
+        private void CalculatePrivateCarMileageExpenses(TravelReportVM view)
         {
             decimal mileageSum = 0;
-            var countryAllowance = _countryAllowanceRepository.FindById(view.CountryAllowanceId).MapToView();
 
             if (view.StartMileage != null && view.EndMileage != null)
                 mileageSum = view.EndMileage.Value - view.StartMileage.Value;
@@ -729,6 +737,21 @@ namespace TRXpense.App.Web.Controllers
                     _expenseRepository.AddToDatabase(mileageExpense.MapToModel());
 
                 _expenseRepository.Save();
+            }
+            else // in case that VehicleType gets changed from "PrivateCar" to any other VehicleType, delete previously existing PrivateCarExpense
+            {
+                var privateCarExpense = _expenseRepository
+                    .GetAllFromDatabaseEnumerable()
+                    .Where(e => e.ExpenseCategoryId == 10 && e.TravelReportId == view.Id)
+                    .SingleOrDefault()
+                    .MapToView();
+
+                if (privateCarExpense != null)
+                {
+                    var expenseInDb = _expenseRepository.FindById(privateCarExpense.Id);
+                    _expenseRepository.DeleteFromDatabase(expenseInDb);
+                    _expenseRepository.Save();
+                }
             }
         }
 

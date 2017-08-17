@@ -306,6 +306,12 @@ a:focus {
     width: 88px;
 }
 
+#datetimepickerDateOfBirth {
+    float: left;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
 /* -------------------------------- 
     My Profile page
 -------------------------------- */
@@ -369,14 +375,19 @@ a:focus {
     Travel Order
 -------------------------------- */
 
-#hiddenRegistrationDropdown {
+#hiddenRegistrationDropdown, #hiddenMileageForm, #hiddenDepositField, #hiddenDepositForm {
     display: none;
 }
 
-#hiddenMileageForm {
-    display: none;
+#depositCheckbox {
+    padding-top: 11px;
+    padding-right: 247px;
+    padding-left: 64px;
+    transform: scale(1.5);
 }
 
-#hiddenDepositField {
-    display: none;
+#datetimepickerDeparture {
+    float: left;
+    padding-left: 15px;
+    padding-right: 15px;
 }

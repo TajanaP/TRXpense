@@ -52,7 +52,6 @@
                                 <td><h4>Employee</h4></td>
                                 <td><h4>Country</h4></td>
                                 <td><h4>Departure</h4></td>
-                                <td><h4>Return</h4></td>
                                 <td><h4>Expense</h4></td>
                                 <td></td>
                             </tr>
@@ -64,7 +63,6 @@
                                     <td>@travelReport.Employee.FirstName @travelReport.Employee.LastName</td>
                                     <td>@travelReport.Country.Country</td>
                                     <td>@travelReport.Departure</td>
-                                    <td>@travelReport.Return</td>
                                     <td>@travelReport.ExpenseSum</td>
                                     <td>
                                         <div class="controlButtons">
@@ -72,6 +70,7 @@
                                             {
                                                 <a href="#" class="btn btn-primary" onclick="ConfirmClosing(@travelReport.Id)"><i class="glyphicon glyphicon-ok"></i> </a>
                                                 @Html.ActionLink(" ", "Edit", "TravelReport", new { id = travelReport.Id }, new { @class = "btn btn-default glyphicon glyphicon-pencil" })
+                                                <a href="#" class="btn btn-default" onclick="ConfirmSending(@travelReport.Id)"><i class="glyphicon glyphicon-send"></i> </a>
                                             }
                                             @Html.ActionLink(" ", "Print", "TravelReport", new { id = travelReport.Id }, new { @class = "btn btn-default glyphicon glyphicon-download-alt" })
                                             <a href="#" class="btn btn-danger" onclick="ConfirmDelete(@travelReport.Id)"><i class="glyphicon glyphicon-trash"></i> </a>
@@ -127,7 +126,25 @@
                 </div>
                 <div class="modal-footer">
                     <a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
-                    <a href="#" class="btn btn-danger" onclick="CloseTravelReport()">Confirm</a>
+                    <a href="#" class="btn btn-primary" onclick="CloseTravelReport()">Confirm</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="sendConfirmModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <a href="#" class="close" data-dismiss="modal">&times;</a>
+                    <h4 class="modal-title">Send for approval</h4>
+                </div>
+                <div class="modal-body">
+                    <p>By clicking on confirmation button this travel report will be sent to your superior for approval.</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+                    <a href="#" class="btn btn-primary" onclick="SendTravelReport()">Confirm</a>
                 </div>
             </div>
         </div>
@@ -175,6 +192,37 @@
                 success: function () {
                     $("#closeConfirmModal").modal("hide");
                     window.location.reload();
+                }
+            })
+        }
+
+        // send travel report for approval
+        var ConfirmSending = function (id) {
+            $("#hiddenId").val(id);
+            $("#sendConfirmModal").modal('show');
+        }
+
+        var SendTravelReport = function () {
+            var trId = $("#hiddenId").val();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SendForApproval")',
+                data: { id: trId },
+                success: function (result) {
+                    if (result == true) {
+                        bootbox.dialog({
+                            message: "Travel report successfully sent!",
+                            title: "<span style='color:#93c54b;' class='glyphicon glyphicon-ok'></span>"
+                                + "<span style='color:#93c54b;'><strong> Success </strong></span> ",
+                            buttons: {
+                                success: {
+                                    label: "Close",
+                                    className: "btn-default",
+                                },
+                            }
+                        });
+                        $("#sendConfirmModal").modal("hide");
+                    }
                 }
             })
         }

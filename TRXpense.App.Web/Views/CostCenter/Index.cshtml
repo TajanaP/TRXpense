@@ -121,8 +121,8 @@
                             message: "There are employees assigned to this Cost Center!"
                                 + "</br>"
                                 + "You can only delete Cost Centers with no employees.",
-                            title: "<span style='color:#e20a0a;'><strong> Warning </strong></span> "
-                                + '<span style="color:#e20a0a;" class="glyphicon glyphicon-warning-sign"></span>',
+                            title: "<span style='color:#e20a0a;' class='glyphicon glyphicon-warning-sign'></span>"
+                                + "<span style='color:#e20a0a;'><strong> Warning </strong></span> ",
                             buttons: {
                                 success: {
                                     label: "Close",
@@ -132,7 +132,7 @@
                         });
                         $("#deleteConfirmModal").modal("hide");
                     }
-                        // if there are no employees in this CC
+                    // if there are no employees in this CC
                     else {
                         $("#deleteConfirmModal").modal("hide");
                         $("#row_" + ccId).remove();

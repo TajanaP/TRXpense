@@ -27,13 +27,12 @@ namespace TRXpense.App.Web.Controllers
             // paging
             int pageSize = 5;
             var pageNumber = page ?? 1; // if no page was specified in the querystring, default to the first page (1)
-            var onePageOfRoles = roles.ToPagedList(pageNumber, pageSize); // will only contain 5 products max because of the pageSize
+            var onePageOfRoles = roles.ToPagedList(pageNumber, pageSize); // will only contain 5 items max because of the pageSize
 
             // searching
             if (!string.IsNullOrEmpty(query))
             {
                 var roleSearched = _context.Roles.Where(r => r.Name.ToLower().Contains(query.ToLower())).ToList();
-
                 onePageOfRoles = roleSearched.ToPagedList(pageNumber, pageSize);
             }
 
@@ -147,10 +146,7 @@ namespace TRXpense.App.Web.Controllers
                 _context.SaveChanges();
             }
             else
-            {
                 TempData["message"] = "There are employees assigned to this Role! You can only delete roles with no employees.";
-                return RedirectToAction("Index");
-            }
 
             return RedirectToAction("Index");
         }

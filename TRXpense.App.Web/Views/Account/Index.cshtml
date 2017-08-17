@@ -159,11 +159,11 @@
                     // if this user is superior
                     if (result != true) {
                         bootbox.dialog({
-                            message: "This employee is a superior with other employees assigned to him!"
+                            message: "Please check if this employee is a superior to other employees or there are travel reports for this employee in the database!"
                                 + "</br>"
-                                + "You can only delete superior employees when there are no other employees assigned to them.",
-                            title: "<span style='color:#e20a0a;'><strong> Warning </strong></span> "
-                                + '<span style="color:#e20a0a;" class="glyphicon glyphicon-warning-sign"></span>',
+                                + "You can only delete employees when there are no other employees assigned to them and they don't have any travel reports in the database.",
+                            title: "<span style='color:#e20a0a;' class='glyphicon glyphicon-warning-sign'></span>"
+                                + "<span style='color:#e20a0a;'><strong> Warning </strong></span> ",
                             buttons: {
                                 success: {
                                     label: "Close",

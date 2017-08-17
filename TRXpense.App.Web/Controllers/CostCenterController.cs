@@ -22,12 +22,12 @@ namespace TRXpense.App.Web.Controllers
         // GET: CostCenter
         public ActionResult Index(int? page, string query = null)
         {
-            var costCenters = _costCenterRepository.GetAllFromDatabaseEnumerable().ToList().MapToViews();
+            var costCenters = _costCenterRepository.GetAllFromDatabaseEnumerable().ToList().MapToViews().OrderBy(o => o.Name);
 
             // paging
             int pageSize = 5;
             var pageNumber = page ?? 1; // if no page was specified in the querystring, default to the first page (1)
-            var onePageOfCostCenters = costCenters.ToPagedList(pageNumber, pageSize); // will only contain 5 products max because of the pageSize
+            var onePageOfCostCenters = costCenters.ToPagedList(pageNumber, pageSize); // will only contain 5 items max because of the pageSize
 
             // searching
             if (!string.IsNullOrEmpty(query))
@@ -58,25 +58,6 @@ namespace TRXpense.App.Web.Controllers
             return PartialView("_CostCenterForm");
         }
 
-        // POST: /CostCenter/Create
-        [HttpPost]
-        public ActionResult Save(CostCenterVM costCenter)
-        {
-            ModelState.Remove("Id");
-
-            if (!ModelState.IsValid)
-                return RedirectToAction("Index");
-
-            if (costCenter.Id == 0)
-                _costCenterRepository.AddToDatabase(costCenter.MapToModel());
-            else
-                _costCenterRepository.UpdateInDatabase(costCenter.MapToModel(), costCenter.Id);
-
-            _costCenterRepository.Save();
-
-            return RedirectToAction("Index");
-        }
-
         // GET: CostCenter/Edit
         public ActionResult Edit(int id)
         {
@@ -88,11 +69,28 @@ namespace TRXpense.App.Web.Controllers
             return PartialView("_CostCenterForm", costCenter);
         }
 
+        // POST: /CostCenter/Create
+        [HttpPost]
+        public ActionResult Save(CostCenterVM view)
+        {
+            ModelState.Remove("Id");
+            if (ModelState.IsValid)
+            {
+                if (view.Id == 0)
+                    _costCenterRepository.AddToDatabase(view.MapToModel());
+                else
+                    _costCenterRepository.UpdateInDatabase(view.MapToModel(), view.Id);
+
+                _costCenterRepository.Save();
+            }
+            return RedirectToAction("Index");
+        }
+
         // CostCenter/Delete/Id
         public JsonResult Delete(int id)
         {
             var costCenterInDB = _costCenterRepository.FindById(id);
-            var users = _applicationUserRepository.GetAllFromDatabaseEnumerable().Where(u => u.CostCenterId == id).ToList();
+            var users = _applicationUserRepository.GetAllFromDatabaseEnumerable().Where(u => u.CostCenterId == id).ToList().MapToViews();
             bool result = false;
 
             if (users.Count == 0 && costCenterInDB != null)

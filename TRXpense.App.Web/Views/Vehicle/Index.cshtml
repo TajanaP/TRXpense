@@ -119,26 +119,28 @@
                 url: '@Url.Action("Delete")', @* or "/Vehicle/Delete"*@
                 data: { id: vehId },
                 success: function (result) {
-                    // if vehicle is assigned to employee
-                    //if (result != true) {
-                    //    bootbox.dialog({
-                    //        message: "This vehicle is assigned to an employee"
-                    //            + "</br>"
-                    //            + "You can only delete vehicles that are not assigned to employees.",
-                    //        title: "<span style='color:#e20a0a;'><strong> Warning </strong></span> "
-                    //            + '<span style="color:#e20a0a;" class="glyphicon glyphicon-warning-sign"></span>',
-                    //        buttons: {
-                    //            success: {
-                    //                label: "Close",
-                    //                className: "btn-default",
-                    //            },
-                    //        }
-                    //    });
-                    //    $("#deleteConfirmModal").modal("hide");
-                    //}
-                    // if vehicle is not assinged to employee
-                    $("#deleteConfirmModal").modal("hide");
-                    $("#row_" + vehId).remove();
+                    // if vehicle is assigned to travel report
+                    if (result != true) {
+                        bootbox.dialog({
+                            message: "This vehicle is assigned to one or more travel reports!"
+                                + "</br>"
+                                + "You can only delete vehicles that are not assigned to travel reports.",
+                            title: "<span style='color:#e20a0a;' class='glyphicon glyphicon-warning-sign'></span>"
+                                + "<span style='color:#e20a0a;'><strong> Warning </strong></span> ",
+                            buttons: {
+                                success: {
+                                    label: "Close",
+                                    className: "btn-default",
+                                },
+                            }
+                        });
+                        $("#deleteConfirmModal").modal("hide");
+                    }
+                    // if vehicle is not assinged to report
+                    else {
+                        $("#deleteConfirmModal").modal("hide");
+                        $("#row_" + vehId).remove();
+                    }
                 }
             })
         }
