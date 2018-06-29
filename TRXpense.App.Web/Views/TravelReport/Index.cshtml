@@ -62,7 +62,7 @@
                                 <tr id="row_@travelReport.Id">
                                     <td>@travelReport.Employee.FirstName @travelReport.Employee.LastName</td>
                                     <td>@travelReport.Country.Country</td>
-                                    <td>@travelReport.Departure</td>
+                                    <td>@travelReport.Departure.ToShortDateString()</td>
                                     <td>@travelReport.ExpenseSum</td>
                                     <td>
                                         <div class="controlButtons">
@@ -71,12 +71,20 @@
                                                 <a href="#" class="btn btn-primary" onclick="ConfirmClosing(@travelReport.Id)"><i class="glyphicon glyphicon-ok"></i> </a>
                                                 @Html.ActionLink(" ", "Edit", "TravelReport", new { id = travelReport.Id }, new { @class = "btn btn-default glyphicon glyphicon-pencil" })
                                                 <a href="#" class="btn btn-default" onclick="ConfirmSending(@travelReport.Id)"><i class="glyphicon glyphicon-send"></i> </a>
+                                                @Html.ActionLink(" ", "DownloadAsPDF", "TravelReport", new { id = travelReport.Id }, new { @class = "btn btn-default glyphicon glyphicon-download-alt" })
+                                                <a href="#" class="btn btn-danger" onclick="ConfirmDelete(@travelReport.Id)"><i class="glyphicon glyphicon-trash"></i> </a>
                                             }
-                                            @Html.ActionLink(" ", "Print", "TravelReport", new { id = travelReport.Id }, new { @class = "btn btn-default glyphicon glyphicon-download-alt" })
-                                            <a href="#" class="btn btn-danger" onclick="ConfirmDelete(@travelReport.Id)"><i class="glyphicon glyphicon-trash"></i> </a>
+                                            @if (travelReport.Status == TRXpense.Bll.Model.Status.Closed)
+                                            {
+                                                @Html.ActionLink(" ", "DownloadAsPDF", "TravelReport", new { id = travelReport.Id }, new { @class = "btn btn-default glyphicon glyphicon-download-alt" })
+                                                if (User.IsInRole("Admin"))
+                                                {
+                                                    <a href="#" class="btn btn-danger" onclick="ConfirmDelete(@travelReport.Id)"><i class="glyphicon glyphicon-trash"></i> </a>
+                                                }
+                                            }
                                         </div>
                                     </td>
-                                    </tr>
+                                </tr>
                             }
                         </tbody>
                     </table>

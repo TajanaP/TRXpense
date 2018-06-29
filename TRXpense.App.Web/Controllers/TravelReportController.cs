@@ -177,7 +177,7 @@ namespace TRXpense.App.Web.Controllers
         }
 
         [AllowAnonymous]
-        public ActionResult Print(int id)
+        public ActionResult DownloadAsPDF(int id)
         {
             var travelReport = _travelReportRepository.FindById(id).MapToView();
 
@@ -706,7 +706,6 @@ namespace TRXpense.App.Web.Controllers
                 mileageSum = view.EndMileage.Value - view.StartMileage.Value;
 
             // add/update private car expense in Expenses
-
             if (view.VehicleType.Value == 0)
             {
                 var mileageExpense = new ExpenseVM

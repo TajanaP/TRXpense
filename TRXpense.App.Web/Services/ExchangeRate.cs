@@ -53,7 +53,7 @@ namespace TRXpense.App.Web.Services
 
         private string getXml(string date)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://api.hnb.hr/tecajn?datum=" + date + "&format=xml");
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://api.hnb.hr/tecajn/v1?datum=" + date + "&format=xml");
 
             using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
             using (Stream stream = response.GetResponseStream())

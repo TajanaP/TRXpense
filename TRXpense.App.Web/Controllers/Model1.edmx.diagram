@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="3c867f90dedb4d0982cd6518f632a722" Name="Diagram1">
+        <EntityTypeShape EntityType="Model.C__MigrationHistory" Width="1.5" PointX="11.125" PointY="0.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.AspNetRoles" Width="1.5" PointX="0.5" PointY="0.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.AspNetUserClaims" Width="1.5" PointX="0.5" PointY="2.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.AspNetUserLogins" Width="1.5" PointX="0.5" PointY="5.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.AspNetUsers" Width="1.5" PointX="2.625" PointY="0.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.CostCenters" Width="1.5" PointX="4.75" PointY="5.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.CountryAllowances" Width="1.5" PointX="4.75" PointY="0.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.ExpenseCategories" Width="1.5" PointX="11.125" PointY="3.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Expenses" Width="1.5" PointX="9" PointY="3" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.TravelReports" Width="1.5" PointX="6.875" PointY="0.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Vehicles" Width="1.5" PointX="9" PointY="0.625" IsExpanded="true" />
+        <AssociationConnector Association="Model.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK_dbo_AspNetUsers_dbo_AspNetUsers_SuperiorId" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK_dbo_AspNetUsers_dbo_CostCenters_CostCenterId" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK_dbo_TravelReports_dbo_AspNetUsers_EmployeeId" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK_dbo_TravelReports_dbo_CountryAllowances_CountryAllowanceId" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK_dbo_Expenses_dbo_ExpenseCategories_ExpenseCategoryId" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK_dbo_Expenses_dbo_TravelReports_TravelReportId" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK_dbo_TravelReports_dbo_Vehicles_VehicleId" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.AspNetUserRoles" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

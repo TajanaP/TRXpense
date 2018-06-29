@@ -152,7 +152,7 @@
                                     @foreach (var expense in Model.Expenses)
                                     {
                                         <tr id="row_@expense.Id">
-                                            <td>@expense.Date</td>
+                                            <td>@expense.Date.ToShortDateString()</td>
                                             <td>@expense.BillNumber</td>
                                             <td>@expense.BillAmount</td>
                                             <td>@expense.OfficialCurrency</td>
@@ -316,7 +316,7 @@
                         bootbox.dialog({
                             message: "You can not delete this expense!"
                                 + "</br>"
-                                + "Please change data in report to change/delete this expense.",
+                            + "Please change data in report to change/delete this expense.",
                             title: "<span style='color:#e20a0a;' class='glyphicon glyphicon-warning-sign'></span>"
                                 + "<span style='color:#e20a0a;'><strong> Warning </strong></span> ",
                             buttons: {
